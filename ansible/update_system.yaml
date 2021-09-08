@@ -10,4 +10,4 @@
         state: latest
 
     - name: Reboot the system after upgrade
-      reboot:
+      ansible.builtin.reboot:
