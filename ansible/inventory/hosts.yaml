@@ -1,5 +1,6 @@
 all:
-  ansible_user: queljin
+  vars:
+    ansible_user: queljin
   hosts:
     rpi01:
     rpi02:
