@@ -1,0 +1,10 @@
+---
+- hosts: all
+  any_errors_fatal: true
+  become: true
+  tasks:
+    - name: Fully upgrade the system
+      ansible.builtin.apt:
+        update_cache: true
+        name: "*"
+        state: latest
