@@ -1,0 +1,31 @@
+#jinja2: lstrip_blocks: True
+#cloud-config
+
+apt:
+  primary:
+    - arches: [arm64]
+      uri: {{ provision_disks_rpi_apt_repo }}
+  conf: |
+    APT {
+      Periodic {
+        Update-Package-Lists "0";
+        Unattended-Upgrade "0";
+      }
+    }
+
+users:
+  - name: {{ provision_disks_rpi_username }}
+    ssh_authorized_keys:
+      {% for k in provision_disks_rpi_ssh_authorized_keys_list %}
+      - {{ k }}
+      {% endfor %}
+    lock_passwd: true
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, sudo, adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, video
+    shell: /bin/bash
+
+runcmd:
+  - [ systemctl, stop, unattended-upgrades.service ]
+  - [ systemctl, disable, unattended-upgrades.service]
+
+hostname: {{ provision_disks_rpi_hostname }} # change this for each RPi
