@@ -1,0 +1,85 @@
+---
+- hosts: localhost
+  any_errors_fatal: true
+  become: true
+  vars:
+    # Configure these manually
+    provision_disks_image_file: ../rpi-image/RPI-USB-BOOT.img
+    provision_disks_mount_point: ../temp/mount
+    provision_disks_writable_size: 101GiB
+    provision_disks_create_third_partition: true
+    provision_disks_rpi_apt_repo: https://mirror.kumi.systems/ubuntu-ports/
+    provision_disks_rpi_username: queljin
+    provision_disks_rpi_ssh_authorized_keys_list:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCk/uh6KjUB8wNwLawPdZyJ9AcN0aHjspZuukQcsI773s1ghy5U4Wlhx+FEeUsZzBEcMRGf8bZzyvhb57H8B/lA7W4wz9TfLHAPu2OqE2Lu8anxqebCmjSchvfckefHe7B/J0oUtyhqOyw5+DPvi8HSbIh5/oxQqwweUGl9nqmhLZj883fnGYGsvoSKHmkuh2PpSLZQng8cGGAR7/1wakIR8XWMmDt7k+AYrTuSihJLpgiWgexZ2mTcVuEpJhhi2nC/0lKly4Czvg/EuKHDMocV0dJz8/1CVxlpO7oQvPMx4x1aPZQqUNYqmv60Voc33xM4Qg7dv4I371O/tOHAew7V queljin@thebox
+  vars_prompt:
+    # These will be prompted when the playbook is run
+    - name: provision_disks_device
+      prompt: Which disk to provision? !! BEWARE THIS WILL DESTROY THE ENTIRE DISK !!
+      private: false
+    - name: provision_disks_rpi_hostname
+      prompt: Enter a hostname for your Raspberry Pi
+      private: false
+  tasks:
+    - name: Write Raspberry Pi Ubuntu image to disk
+      command:
+        dd if={{ provision_disks_image_file }} of={{ provision_disks_device }}
+      when: not ansible_check_mode
+      tags: run_dd
+
+    - name: Read the second (writable) partition size
+      community.general.parted:
+        device: "{{ provision_disks_device }}"
+        unit: s
+      register: disk_info
+
+    - name: Remove the second (writable) partition
+      community.general.parted:
+        device: "{{ provision_disks_device }}"
+        number: 2
+        state: absent
+
+    - name: Recreate the second partition with a larger size
+      community.general.parted:
+        device: "{{ provision_disks_device }}"
+        number: 2
+        fs_type: ext4
+        unit: s
+        part_start: "{{ disk_info.partitions[1].begin }}s"
+        part_end: "{{ provision_disks_writable_size }}"
+        state: present
+      register: writable_info
+
+    - name: Create a third partition to hold the data. Will use the remaining space.
+      community.general.parted:
+        device: "{{ provision_disks_device }}"
+        number: 3
+        fs_type: ext4
+        part_start: "{{ writable_info.partitions[1].end + 1 }}s"
+        part_end: 100%
+        state: present
+      when: provision_disks_create_third_partition
+
+    - name: Mount the writable partition temporarily
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: ext4
+        path: ../temp/mount/writable
+        src: "{{ provision_disks_device }}2"
+        state: mounted
+
+    - name: Copy the cloud-init configuration to writable partition
+      ansible.builtin.template:
+        src: templates/cloud.config.d/99-rpi.cfg.j2
+        dest: ../temp/mount/writable/etc/cloud/cloud.cfg.d/99-rpi.cfg
+        group: root
+        owner: root
+        mode: 0644
+
+    - name: Unmount the writable partition
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: ext4
+        path: ../temp/mount/writable
+        src: "{{ provision_disks_device }}2"
+        state: unmounted
