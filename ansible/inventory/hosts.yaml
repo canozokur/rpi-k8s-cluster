@@ -1,0 +1,7 @@
+all:
+  ansible_user: queljin
+  hosts:
+    rpi01:
+    rpi02:
+    rpi03:
+    rpi04:
