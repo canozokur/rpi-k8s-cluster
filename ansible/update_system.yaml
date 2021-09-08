@@ -8,3 +8,6 @@
         update_cache: true
         name: "*"
         state: latest
+
+    - name: Reboot the system after upgrade
+      reboot:
