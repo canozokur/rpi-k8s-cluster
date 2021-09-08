@@ -21,6 +21,13 @@
       prompt: Enter a hostname for your Raspberry Pi
       private: false
   tasks:
+    - name: Are you sure?
+      pause:
+        prompt: |-
+          Please confirm you want to use {{ provision_disks_device }} as your disk.
+          THIS WILL DESTROY {{ provision_disks_device }}
+          Press ENTER to continue, CTRL+C to abort
+
     - name: Write Raspberry Pi Ubuntu image to disk
       command:
         dd if={{ provision_disks_image_file }} of={{ provision_disks_device }}
