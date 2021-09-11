@@ -6,7 +6,7 @@
     - name: Fully upgrade the system
       ansible.builtin.apt:
         update_cache: true
-        upgrade: safe
+        upgrade: full
 
     - name: Reboot the system after upgrade
       ansible.builtin.reboot:
