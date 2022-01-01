@@ -3,6 +3,15 @@
   any_errors_fatal: true
   become: true
   tasks:
+#    - name: Ignore cert errors temporarily
+#      ansible.builtin.copy:
+#        dest: /etc/apt/apt.conf.d/99-kumisystems-cert
+#        content: |
+#          Acquire::https::mirror.kumi.systems::Verify-Peer "false";
+#        mode: 0644
+#        owner: root
+#        group: root
+
     - name: Fully upgrade the system
       ansible.builtin.apt:
         update_cache: true
