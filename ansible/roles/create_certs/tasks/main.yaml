@@ -1,0 +1,111 @@
+---
+- name: Set facts for components
+  set_fact:
+    components:
+      - name: "admin"
+        common_name: "admin"
+        organization: "system:masters"
+      - name: "kube-controller-manager"
+        common_name: "system:kube-controller-manager"
+        organization: "system:kube-controller-manager"
+      - name: "kube-proxy"
+        common_name: "system:kube-proxy"
+        organization: "system:node-proxier"
+      - name: "kube-scheduler"
+        common_name: "system:kube-scheduler"
+        organization: "system:kube-scheduler"
+      - name: "kube-api"
+        common_name: "kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
+        organization: "Kubernetes"
+      - name: "service-account"
+        common_name: "service-accounts"
+        organization: "Kubernetes"
+
+- name: Create private key for CA
+  community.crypto.openssl_privatekey:
+    path: ../certs/ca.key
+    mode: 0600
+  register: ca_key
+
+- name: Create a sign request for root cert
+  community.crypto.openssl_csr:
+    path: ../certs/ca.csr
+    privatekey_path: "{{ ca_key.filename }}"
+    common_name: "Kubernetes"
+    key_usage:
+      - "keyCertSign"
+      - "digitalSignature"
+      - "keyEncipherment"
+      - "dataEncipherment"
+      - "cRLSign"
+    extended_key_usage:
+      - "serverAuth"
+      - "clientAuth"
+      - "codeSigning"
+  register: ca_csr
+
+- name: Sign the root cert
+  community.crypto.x509_certificate:
+    path: ../certs/ca.crt
+    csr_path: "{{ ca_csr.filename }}"
+    privatekey_path: "{{ ca_key.filename }}"
+    selfsigned_not_after: "+3650d"
+    provider: selfsigned
+  register: ca_crt
+
+- name: Create private keys for kubelet clients
+  community.crypto.openssl_privatekey:
+    path: ../certs/{{ item }}.key
+    mode: 0600
+  register: kubelet_key
+  with_inventory_hostnames:
+    - k8s_nodes
+
+- name: Create a CSR for kubelet clients
+  community.crypto.openssl_csr:
+    path: ../certs/{{ item }}.csr
+    privatekey_path: "{{ (kubelet_key.results | selectattr('item', 'eq', item) | first).filename }}"
+    CN: "system:node:{{ item }}"
+    O: "system:nodes"
+  register: kubelet_csr
+  with_inventory_hostnames:
+    - k8s_nodes
+
+- name: Sign the kubelet CSRs
+  community.crypto.x509_certificate:
+    path: ../certs/{{ item }}.crt
+    csr_path: "{{ (kubelet_csr.results | selectattr('item', 'eq', item) | first).filename }}"
+    privatekey_path: "{{ (kubelet_key.results | selectattr('item', 'eq', item) | first).filename }}"
+    ownca_path: "{{ ca_crt.filename }}"
+    ownca_privatekey_path: "{{ ca_key.filename }}"
+    ownca_not_after: "+3650d"
+    provider: ownca
+  with_inventory_hostnames:
+    - k8s_nodes
+
+- name: Create private keys for components
+  community.crypto.openssl_privatekey:
+    path: ../certs/{{ item.name }}.key
+    mode: 0600
+  register: keys
+  loop: "{{ components }}"
+
+- name: Create a CSR for components
+  community.crypto.openssl_csr:
+    path: ../certs/{{ item.name }}.csr
+    privatekey_path: "{{ keys.results | selectattr('item.name', 'eq', item.name) | map(attribute='filename') | first }}"
+    CN: "{{ item.common_name }}"
+    O: "{{ item.organization }}"
+  register: csrs
+  loop: "{{ components }}"
+
+- name: Sign the CSR for components
+  community.crypto.x509_certificate:
+    path: ../certs/{{ item.name }}.crt
+    csr_path: "{{ csrs.results | selectattr('item.name', 'eq', item.name) | map(attribute='filename') | first }}"
+    privatekey_path: "{{ keys.results | selectattr('item.name', 'eq', item.name) | map(attribute='filename') | first }}"
+    ownca_path: "{{ ca_crt.filename }}"
+    ownca_privatekey_path: "{{ ca_key.filename }}"
+    ownca_not_after: "+3650d"
+    provider: ownca
+  loop: "{{ components }}"
