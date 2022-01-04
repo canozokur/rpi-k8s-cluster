@@ -2,3 +2,4 @@ rpi-image
 .vscode
 temp/mount/fstab
 README.md
+certs/
