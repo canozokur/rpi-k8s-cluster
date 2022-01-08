@@ -15,7 +15,12 @@
         common_name: "system:kube-scheduler"
         organization: "system:kube-scheduler"
       - name: "kube-api"
-        common_name: "kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
+        common_name: "kubernetes\
+          ,kubernetes.default\
+          ,kubernetes.default.svc\
+          ,kubernetes.default.svc.cluster\
+          ,kubernetes.svc.cluster.local\
+          ,{{ groups['all'] | map('extract', hostvars, ['ansible_eth0', 'ipv4', 'address']) | join(',') }}"
         organization: "Kubernetes"
       - name: "service-account"
         common_name: "service-accounts"
