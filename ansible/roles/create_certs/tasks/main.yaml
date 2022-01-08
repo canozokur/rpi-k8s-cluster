@@ -1,7 +1,7 @@
 ---
 - name: Set facts for components
   set_fact:
-    components:
+    k8s_services:
       - name: "admin"
         common_name: "admin"
         organization: "system:masters"
@@ -20,6 +20,22 @@
       - name: "service-account"
         common_name: "service-accounts"
         organization: "Kubernetes"
+
+- name: Set facts for nodes (kubelets)
+  set_fact:
+    k8s_nodes: "{{ (k8s_nodes | default([])) + [
+        {
+          'name': item,
+          'common_name': 'system:node:' + item,
+          'organization': 'system:nodes'
+        }
+      ] }}"
+  with_inventory_hostnames:
+    - all
+
+- name: Combine facts to create components
+  set_fact:
+    components: "{{ k8s_nodes + k8s_services }}"
 
 - name: Create private key for CA
   community.crypto.openssl_privatekey:
@@ -52,36 +68,6 @@
     selfsigned_not_after: "+3650d"
     provider: selfsigned
   register: ca_crt
-
-- name: Create private keys for kubelet clients
-  community.crypto.openssl_privatekey:
-    path: ../certs/{{ item }}.key
-    mode: 0600
-  register: kubelet_key
-  with_inventory_hostnames:
-    - k8s_nodes
-
-- name: Create a CSR for kubelet clients
-  community.crypto.openssl_csr:
-    path: ../certs/{{ item }}.csr
-    privatekey_path: "{{ (kubelet_key.results | selectattr('item', 'eq', item) | first).filename }}"
-    CN: "system:node:{{ item }}"
-    O: "system:nodes"
-  register: kubelet_csr
-  with_inventory_hostnames:
-    - k8s_nodes
-
-- name: Sign the kubelet CSRs
-  community.crypto.x509_certificate:
-    path: ../certs/{{ item }}.crt
-    csr_path: "{{ (kubelet_csr.results | selectattr('item', 'eq', item) | first).filename }}"
-    privatekey_path: "{{ (kubelet_key.results | selectattr('item', 'eq', item) | first).filename }}"
-    ownca_path: "{{ ca_crt.filename }}"
-    ownca_privatekey_path: "{{ ca_key.filename }}"
-    ownca_not_after: "+3650d"
-    provider: ownca
-  with_inventory_hostnames:
-    - k8s_nodes
 
 - name: Create private keys for components
   community.crypto.openssl_privatekey:
