@@ -1,5 +1,10 @@
 ---
+- hosts: all
+  gather_facts: true
+
 - hosts: localhost
   any_errors_fatal: true
   roles:
     - role: create_certs
+      vars:
+        create_certs_kube_api_public_ip: 192.168.2.10
