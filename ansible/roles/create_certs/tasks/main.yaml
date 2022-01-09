@@ -106,3 +106,10 @@
     return_content: true
   register: certs
   loop: "{{ components }}"
+
+- name: Create configuration for components
+  template:
+    src: templates/kubeconfig.j2
+    dest: ../config/{{ item.name }}.kubeconfig
+    mode: 0600
+  loop: "{{ components }}"
