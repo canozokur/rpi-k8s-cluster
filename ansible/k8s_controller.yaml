@@ -8,3 +8,4 @@
     - role: create_certs
       vars:
         create_certs_kube_api_public_ip: 192.168.2.10
+        create_certs_cluster_name: rpi-cluster
