@@ -73,12 +73,15 @@
     privatekey_path: "{{ ca_key.filename }}"
     selfsigned_not_after: "+3650d"
     provider: selfsigned
+    return_content: true
   register: ca_crt
+  no_log: true
 
 - name: Create private keys for components
   community.crypto.openssl_privatekey:
     path: ../certs/{{ item.name }}.key
     mode: 0600
+    return_content: true
   register: keys
   loop: "{{ components }}"
 
@@ -100,4 +103,6 @@
     ownca_privatekey_path: "{{ ca_key.filename }}"
     ownca_not_after: "+3650d"
     provider: ownca
+    return_content: true
+  register: certs
   loop: "{{ components }}"
