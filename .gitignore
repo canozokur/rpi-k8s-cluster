@@ -3,3 +3,4 @@ rpi-image
 temp/mount/fstab
 README.md
 certs/
+config/
