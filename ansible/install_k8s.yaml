@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: true
+
+- hosts: localhost
+  any_errors_fatal: true
+  roles:
+    - role: certs_and_config
+      vars:
+        certs_and_config_kube_api_public_ip: 192.168.2.10
+        certs_and_config_cluster_name: rpi-cluster
+
+- hosts: etcd
+  any_errors_fatal: true
+  become: true
+  roles:
+    - role: etcd_cluster

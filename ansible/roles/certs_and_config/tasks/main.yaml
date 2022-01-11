@@ -21,7 +21,7 @@
           ,kubernetes.default.svc.cluster\
           ,kubernetes.svc.cluster.local\
           ,{{ groups['all'] | map('extract', hostvars, ['ansible_eth0', 'ipv4', 'address']) | join(',') }}\
-          ,{{ create_certs_kube_api_public_ip }}"
+          ,{{ certs_and_config_kube_api_public_ip }}"
         organization: "Kubernetes"
       - name: "service-account"
         common_name: "service-accounts"
