@@ -14,3 +14,11 @@ k8s_nodes:
     rpi02:
     rpi03:
     rpi04:
+
+etcd:
+  vars:
+    ansible_user: queljin
+  hosts:
+    rpi01:
+    rpi02:
+    rpi03:
