@@ -54,6 +54,9 @@
     path: ../certs/ca.csr
     privatekey_path: "{{ ca_key.filename }}"
     common_name: "Kubernetes"
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: yes
     key_usage:
       - "keyCertSign"
       - "digitalSignature"
