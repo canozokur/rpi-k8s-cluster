@@ -95,6 +95,7 @@
     privatekey_path: "{{ keys.results | selectattr('item.name', 'eq', item.name) | map(attribute='filename') | first }}"
     CN: "{{ item.common_name }}"
     O: "{{ item.organization }}"
+    subjectAltName: "{{ item.subject_alt_name | d(omit) }}"
   register: csrs
   loop: "{{ components }}"
 
