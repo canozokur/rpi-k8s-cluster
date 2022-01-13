@@ -118,3 +118,9 @@
     dest: ../config/{{ item.name }}.kubeconfig
     mode: 0600
   loop: "{{ components }}"
+
+- name: Create encryption config
+  template:
+    src: templates/encryption-config.yaml.j2
+    dest: ../config/encryption-config.yaml
+    mode: 0644
