@@ -1,3 +1,4 @@
 ---
 certs_and_config_kube_api_public_ip: "192.168.1.100"
 certs_and_config_cluster_name: "rpi-cluster"
+certs_and_config_encryption_secret: "{{ lookup('env', 'ANSIBLE_K8S_ENCRYPTION_SECRET') | default(lookup('password', '../config/encryption_key chars=ascii_letters,digits length=48'), true) }}"
