@@ -6,10 +6,10 @@ Documentation=https://github.com/coreos
 Type=notify
 ExecStart=/usr/local/bin/etcd \
   --name {{ ansible_hostname }} \
-  --cert-file=/etc/etcd/kube-api.crt \
-  --key-file=/etc/etcd/kube-api.key \
-  --peer-cert-file=/etc/etcd/kube-api.crt \
-  --peer-key-file=/etc/etcd/kube-api.key \
+  --cert-file=/etc/etcd/kube-apiserver.crt \
+  --key-file=/etc/etcd/kube-apiserver.key \
+  --peer-cert-file=/etc/etcd/kube-apiserver.crt \
+  --peer-key-file=/etc/etcd/kube-apiserver.key \
   --trusted-ca-file=/etc/etcd/ca.crt \
   --peer-trusted-ca-file=/etc/etcd/ca.crt \
   --peer-client-cert-auth \

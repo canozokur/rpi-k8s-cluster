@@ -46,9 +46,9 @@
   loop:
     - name: ca.crt
       mode: '0644'
-    - name: kube-api.key
+    - name: kube-apiserver.key
       mode: '0600'
-    - name: kube-api.crt
+    - name: kube-apiserver.crt
       mode: '0644'
 
 - name: Create etcd systemd unit file

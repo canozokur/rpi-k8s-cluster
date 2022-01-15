@@ -14,7 +14,7 @@
       - name: "kube-scheduler"
         common_name: "system:kube-scheduler"
         organization: "system:kube-scheduler"
-      - name: "kube-api"
+      - name: "kube-apiserver"
         common_name: "kubernetes"
         organization: "Kubernetes"
         subject_alt_name: "{{ groups['all'] | map('extract', hostvars, ['ansible_eth0','ipv4', 'address']) | map('regex_replace', '(^.*$)', 'IP:\\1') | join(',') }}\
