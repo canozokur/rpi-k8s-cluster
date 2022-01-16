@@ -59,10 +59,16 @@
     group: root
     mode: 0644
   register: etcd_cluster_unit_file
+  notify:
+    - Reload systemd
+    - Restart etcd service
+
+# flush handlers here since we need to reload systemd if daemon definitions changed
+- name: Flush handlers
+  meta: flush_handlers
 
 - name: Start etcd service
   ansible.builtin.systemd:
     name: etcd
-    state: "{{ etcd_cluster_unit_file is changed | ternary('restarted', 'started') }}"
-    daemon_reload: "{{ etcd_cluster_unit_file is changed | ternary(true, false) }}"
+    state: started
     enabled: true
