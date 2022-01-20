@@ -7,13 +7,11 @@ all:
     rpi03:
     rpi04:
 
-k8s_nodes:
+k8s_controller:
   vars:
     ansible_user: queljin
   hosts:
-    rpi02:
-    rpi03:
-    rpi04:
+    rpi01:
 
 etcd:
   vars:
