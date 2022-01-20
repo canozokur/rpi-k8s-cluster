@@ -1,0 +1,120 @@
+---
+- name: Set facts for k8s controller plane components
+  set_fact:
+    provision_control_plane_components:
+      - kube-apiserver
+      - kube-controller-manager
+      - kube-scheduler
+      - kubectl
+
+- name: Compose k8s download url
+  set_fact:
+    provision_control_plane_k8s_url: "https://dl.k8s.io/{{ provision_control_plane_k8s_version }}/bin/linux/arm64"
+
+- name: Ensure required directories are present
+  file:
+    name: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  loop:
+    - /etc/kubernetes/config
+    - /var/lib/kubernetes
+    - /usr/local/bin
+
+- name: Download k8s components
+  get_url:
+    url: "{{ provision_control_plane_k8s_url }}/{{ item }}"
+    dest: /usr/local/bin/
+    checksum: "sha256:{{ lookup('url', provision_control_plane_k8s_url + '/' + item + '.sha256') }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ provision_control_plane_components }}"
+
+- name: Copy certificates
+  copy:
+    src: ../certs/{{ item.name }}
+    dest: /var/lib/kubernetes/
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  loop:
+    - name: ca.crt
+      mode: "0644"
+    - name: ca.key
+      mode: "0600"
+    - name: kube-apiserver.crt
+      mode: "0644"
+    - name: kube-apiserver.key
+      mode: "0600"
+    - name: service-account.crt
+      mode: "0644"
+    - name: service-account.key
+      mode: "0600"
+
+- name: Copy encryption config
+  copy:
+    src: ../config/encryption-config.yaml
+    dest: /var/lib/kubernetes/
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create kube-apiserver systemd service
+  template:
+    src: templates/kube-apiserver.service.j2
+    dest: /etc/systemd/system/kube-apiserver.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Copy controller manager config
+  copy:
+    src: ../config/kube-controller-manager.kubeconfig
+    dest: /var/lib/kubernetes/
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create controller manager systemd service
+  template:
+    src: templates/kube-controller-manager.service.j2
+    dest: /etc/systemd/system/kube-controller-manager.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Copy scheduler config
+  copy:
+    src: ../config/kube-scheduler.kubeconfig
+    dest: /var/lib/kubernetes/
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create scheduler yaml config
+  template:
+    src: templates/kube-scheduler.yaml.j2
+    dest: /etc/kubernetes/config/kube-scheduler.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create scheduler systemd service
+  template:
+    src: templates/kube-scheduler.service.j2
+    dest: /etc/systemd/system/kube-scheduler.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Flush handlers
+  meta: flush_handlers

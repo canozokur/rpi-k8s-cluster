@@ -1,0 +1,4 @@
+---
+provision_control_plane_k8s_version: v1.23.1
+provision_control_plane_service_ip_range: 10.0.0.0/8
+provision_control_plane_kube_api_public_ip: 192.168.1.1

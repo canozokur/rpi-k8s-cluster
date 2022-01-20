@@ -1,0 +1,40 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+ExecStart=/usr/local/bin/kube-apiserver \
+  --advertise-address={{ ansible_all_ipv4_addresses | ipaddr('private') | first }} \
+  --allow-privileged=true \
+  --apiserver-count=3 \
+  --audit-log-maxage=30 \
+  --audit-log-maxbackup=3 \
+  --audit-log-maxsize=100 \
+  --audit-log-path=/var/log/audit.log \
+  --authorization-mode=Node,RBAC \
+  --bind-address=0.0.0.0 \
+  --client-ca-file=/var/lib/kubernetes/ca.crt \
+  --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+  --etcd-cafile=/var/lib/kubernetes/ca.crt \
+  --etcd-certfile=/var/lib/kubernetes/kube-apiserver.crt \
+  --etcd-keyfile=/var/lib/kubernetes/kube-apiserver.key \
+  --etcd-servers={% for host in groups['etcd'] %}https://{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{%- endfor %} \
+  --event-ttl=1h \
+  --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \
+  --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \
+  --kubelet-client-certificate=/var/lib/kubernetes/kube-apiserver.crt \
+  --kubelet-client-key=/var/lib/kubernetes/kube-apiserver.key \
+  --runtime-config='api/all=true' \
+  --service-account-key-file=/var/lib/kubernetes/service-account.crt \
+  --service-account-signing-key-file=/var/lib/kubernetes/service-account.key \
+  --service-account-issuer=https://{{ provision_control_plane_kube_api_public_ip }}:6443 \
+  --service-cluster-ip-range={{ provision_control_plane_service_ip_range }} \
+  --service-node-port-range=30000-32767 \
+  --tls-cert-file=/var/lib/kubernetes/kube-apiserver.crt \
+  --tls-private-key-file=/var/lib/kubernetes/kube-apiserver.key \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
