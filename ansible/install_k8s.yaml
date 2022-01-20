@@ -15,3 +15,13 @@
   become: true
   roles:
     - role: etcd_cluster
+
+- hosts: all
+  any_errors_fatal: true
+  become: true
+  roles:
+    - role: provision_control_plane
+      vars:
+        provision_control_plane_kube_api_public_ip: 192.168.2.10
+        provision_control_plane_service_ip_range: 10.0.0.0/16
+        provision_control_plane_pod_ip_range: 172.16.0.0/16
