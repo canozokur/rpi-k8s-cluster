@@ -1,0 +1,37 @@
+#jinja2: lstrip_blocks: "True"
+{% set first_server = groups['all'][0] %}
+vrrp_script check_k8s_apiserver {
+  script "/etc/keepalived/scripts/check_kubeapiserver.sh"
+  interval 3
+  rise 1
+  fall 10
+  timeout 1
+  weight 2
+}
+
+vrrp_instance K8SAPI_VIP {
+  interface {{ ansible_default_ipv4.alias }}
+  state BACKUP
+  priority 100
+  virtual_router_id 50
+  notify /etc/keepalived/scripts/notify-kube-api.sh
+
+  authentication {
+    auth_type PASS
+    auth_pass {{ configure_ha_keepalived_auth_pass | default(lookup('password', '../config/keepalived_auth_pass chars=ascii_letters,digits length=8'), true) }}
+  }
+
+  unicast_peer {
+    {% for host in groups['all'] | difference([inventory_hostname])%}
+    {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}
+    {% endfor %}
+  }
+
+  virtual_ipaddress {
+    {{ configure_ha_kube_api_public_ip }}
+  }
+    
+  track_script {
+    check_k8s_apiserver
+  }
+}

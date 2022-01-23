@@ -1,0 +1,152 @@
+---
+- name: Install build tools
+  package:
+    name: build-essential
+    update_cache: true
+    state: present
+
+- name: Install development packages for build
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - libxtables-dev
+    - libip4tc-dev
+    - libip6tc-dev
+    - libipset-dev
+    - libnl-3-dev
+    - libnl-genl-3-dev
+    - libssl-dev
+    - libsystemd-dev
+    - libkmod-dev
+
+- name: Ensure /usr/local/src exists
+  file:
+    path: /usr/local/src
+    state: directory
+    mode: 0755
+
+- name: Create keepalive source dir
+  file:
+    path: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Download and extract keepalived tarball
+  ansible.builtin.unarchive:
+    src: https://www.keepalived.org/software/keepalived-{{ configure_ha_keepalived_version }}.tar.gz
+    dest: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}
+    extra_opts:
+      - --strip=1
+    remote_src: true
+    creates: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}/Makefile.am
+
+- name: Configure the sources
+  command: "./configure --prefix=/usr/local/keepalived-{{ configure_ha_keepalived_version }} --enable-debug"
+  args:
+    chdir: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}
+    creates: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}/Makefile
+  register: configure_ha_keepalived_configure
+
+- name: Build the source
+  community.general.make:
+    chdir: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}
+  when: configure_ha_keepalived_configure is changed
+
+- name: Install built sources
+  community.general.make:
+    chdir: /usr/local/src/keepalived-{{ configure_ha_keepalived_version }}
+    target: install
+  when: configure_ha_keepalived_configure is changed
+
+- name: Link /usr/local/keepalived to the built version
+  file:
+    path: /usr/local/keepalived
+    src: /usr/local/keepalived-{{ configure_ha_keepalived_version }}
+    state: link
+  notify:
+    - Restart keepalived
+
+- name: Create keepalived systemd unit file
+  template:
+    src: templates/keepalived.service.j2
+    dest: /etc/systemd/system/keepalived.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Ensure keepalived configuration and script directory exists
+  file:
+    path: "{{ item.name }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - name: /etc/keepalived
+      mode: '0755'
+    - name: /etc/keepalived/scripts
+      mode: '0700'
+
+- name: Enable ip forwarding and non-local ip binding
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-kubernetes-control-plane-ha.conf
+    state: present
+    reload: true
+    sysctl_set: true
+  loop:
+    - name: net.ipv4.ip_forward
+      value: 1
+    - name: net.ipv4.ip_nonlocal_bind
+      value: 1
+
+- name: Create keepalived configuration
+  template:
+    src: templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - Restart keepalived
+
+- name: Create keepalived defaults file
+  template:
+    src: templates/keepalived.default.j2
+    dest: /etc/default/keepalived
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart keepalived
+
+- name: Create keepalived kube-api notify script
+  template:
+    src: templates/notify-kube-api.sh.j2
+    dest: /etc/keepalived/scripts/notify-kube-api.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Create keepalived kube-api check script
+  template:
+    src: templates/check.sh.j2
+    dest: /etc/keepalived/scripts/check_kubeapiserver.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Enable and start the keepalived service
+  service:
+    name: keepalived
+    state: started
+    enabled: true

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if ! /usr/bin/curl --silent --cacert \
+  /var/lib/kubernetes/ca.crt https://127.0.0.1:6443/healthz;
+then
+  echo "Kubernetes API server health check endpoint is not working"
+  exit 1
+fi
+
+exit 0

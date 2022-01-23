@@ -1,0 +1,42 @@
+#!/bin/bash
+
+logger -t notify-kube-api -p user.info "Received parameters: $@"
+
+log() {
+  logger -t notify-kube-api -p user.info "$1"
+}
+
+state_backup() {
+  log "Fallen back to backup..."
+}
+
+state_fault() {
+  log "Service checks failed"
+}
+
+state_master() {
+  log "Promoted to master, starting kube-apiserver via systemd..."
+  systemctl start kube-apiserver
+}
+
+ENDSTATE=$3
+NAME=$2
+TYPE=$1
+
+case $ENDSTATE in
+    "BACKUP") # Perform action for transition to BACKUP state
+              state_backup
+              exit 0
+              ;;
+    "FAULT")  # Perform action for transition to FAULT state
+              state_fault
+              exit 0
+              ;;
+    "MASTER") # Perform action for transition to MASTER state
+              state_master
+              exit 0
+              ;;
+    *)        echo "Unknown state ${ENDSTATE} for VRRP ${TYPE} ${NAME}"
+              exit 1
+              ;;
+esac
