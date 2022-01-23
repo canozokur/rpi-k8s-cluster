@@ -25,3 +25,7 @@
         provision_control_plane_kube_api_public_ip: 192.168.2.10
         provision_control_plane_service_ip_range: 10.0.0.0/16
         provision_control_plane_pod_ip_range: 172.16.0.0/16
+    - role: configure_ha
+      vars:
+        configure_ha_kube_api_public_ip: 192.168.2.10
+      tags: ha
