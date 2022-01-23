@@ -124,3 +124,15 @@
     name: kube-apiserver
     enabled: true
     state: started
+
+- name: Enable and start kube-controller-manager
+  service:
+    name: kube-controller-manager
+    enabled: true
+    state: started
+
+- name: Enable and start kube-scheduler
+  service:
+    name: kube-scheduler
+    enabled: true
+    state: started
