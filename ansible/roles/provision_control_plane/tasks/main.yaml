@@ -118,3 +118,9 @@
 
 - name: Flush handlers
   meta: flush_handlers
+
+- name: Enable and start kube-apiserver
+  service:
+    name: kube-apiserver
+    enabled: true
+    state: started
