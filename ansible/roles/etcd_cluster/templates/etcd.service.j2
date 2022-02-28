@@ -21,7 +21,9 @@ ExecStart=/usr/local/bin/etcd \
   --initial-cluster-token etcd-cluster-0 \
   --initial-cluster {% for host in groups['etcd'] %}{{ host }}=https://{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:2380{% if not loop.last %},{% endif %}{%- endfor %} \
   --initial-cluster-state new \
-  --data-dir=/var/lib/etcd
+  --data-dir=/var/lib/etcd \
+  --heartbeat-interval=2000 \
+  --election-timeout=10000
 Restart=on-failure
 RestartSec=5
 
