@@ -72,3 +72,27 @@
     name: etcd
     state: started
     enabled: true
+
+- name: Create profile.d exports for etcdctl
+  ansible.builtin.copy:
+    dest: /etc/profile.d/etcdctl.sh
+    content: |
+      export ETCDCTL_ENDPOINTS='https://127.0.0.1:2379'
+      export ETCDCTL_CACERT='/etc/etcd/ca.crt'
+      export ETCDCTL_KEY='/etc/etcd/kube-apiserver.key'
+      export ETCDCTL_CERT='/etc/etcd/kube-apiserver.crt'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add etcdctl environment values to sudo
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/etcdctl
+    content: |
+      Defaults env_keep += "ETCDCTL_ENDPOINTS"
+      Defaults env_keep += "ETCDCTL_CACERT"
+      Defaults env_keep += "ETCDCTL_KEY"
+      Defaults env_keep += "ETCDCTL_CERT"
+    owner: root
+    group: root
+    mode: 0440
