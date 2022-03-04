@@ -31,7 +31,8 @@
         {
           'name': item,
           'common_name': 'system:node:' + item,
-          'organization': 'system:nodes'
+          'organization': 'system:nodes',
+          'subject_alt_name': 'DNS:' + item
         }
       ] }}"
   with_inventory_hostnames:
