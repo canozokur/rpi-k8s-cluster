@@ -7,7 +7,7 @@
   roles:
     - role: certs_and_config
       vars:
-        certs_and_config_kube_api_public_ip: 192.168.2.10
+        certs_and_config_kube_api_public_ip: 192.168.10.1
         certs_and_config_cluster_name: rpi-cluster
 
 - hosts: etcd
@@ -22,10 +22,10 @@
   roles:
     - role: provision_control_plane
       vars:
-        provision_control_plane_kube_api_public_ip: 192.168.2.10
-        provision_control_plane_service_ip_range: 10.0.0.0/16
-        provision_control_plane_pod_ip_range: 172.16.0.0/16
+        provision_control_plane_kube_api_public_ip: 192.168.10.1
+        provision_control_plane_service_ip_range: 192.168.10.0/24
+        provision_control_plane_pod_ip_range: 172.28.0.0/16
     - role: configure_ha
       vars:
-        configure_ha_kube_api_public_ip: 192.168.2.10
-      tags: ha
+        configure_ha_kube_api_public_ip: 192.168.10.1
+
