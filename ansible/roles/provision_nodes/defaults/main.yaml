@@ -1,0 +1,11 @@
+---
+provision_nodes_k8s_version: v1.23.3
+provision_nodes_crictl_version: 1.23.0
+provision_nodes_crictl_checksum: "sha256:91094253e77094435027998a99b9b6a67b0baad3327975365f7715a1a3bd9595"
+provision_nodes_runc_version: 1.1.0
+provision_nodes_runc_checksum: "sha256:9ec8e68feabc4e7083a4cfa45ebe4d529467391e0b03ee7de7ddda5770b05e68"
+provision_nodes_cni_version: 1.0.1
+provision_nodes_cni_checksum: "sha256:2d4528c45bdd0a8875f849a75082bc4eafe95cb61f9bcc10a6db38a031f67226"
+provision_nodes_containerd_version: 1.6.0-rc.1
+provision_nodes_containerd_checksum: "sha256:bc9f96ec51848dd8467210c94f0d7f3be4d73f0331e15d7c581224c218c9c42f"
+provision_nodes_pod_ip_range: 192.168.0.0/16

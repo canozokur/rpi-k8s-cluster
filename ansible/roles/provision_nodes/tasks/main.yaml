@@ -1,0 +1,287 @@
+---
+- name: Set facts for k8s controller plane components
+  set_fact:
+    provision_nodes_components:
+      - kubelet
+      - kube-proxy
+      - kubectl
+
+- name: Compose k8s download url
+  set_fact:
+    provision_nodes_k8s_url: "https://dl.k8s.io/{{ provision_nodes_k8s_version }}/bin/linux/arm64"
+
+- name: Install dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - socat      #required for kubectl port-forward
+    - conntrack
+    - ipset
+
+- name: Disable swap and remove it from fstab if present
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Download k8s components
+  get_url:
+    url: "{{ provision_nodes_k8s_url }}/{{ item }}"
+    dest: /usr/local/bin/
+    checksum: "sha256:{{ lookup('url', provision_nodes_k8s_url + '/' + item + '.sha256') }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ provision_nodes_components }}"
+
+- name: Download crictl tar
+  get_url:
+    url: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ provision_nodes_crictl_version }}/crictl-v{{ provision_nodes_crictl_version }}-linux-arm64.tar.gz
+    dest: /usr/local/src/
+    checksum: "{{ provision_nodes_crictl_checksum | d(omit, true) }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Download cni tar
+  get_url:
+    url: https://github.com/containernetworking/plugins/releases/download/v{{ provision_nodes_cni_version }}/cni-plugins-linux-arm64-v{{ provision_nodes_cni_version }}.tgz
+    dest: /usr/local/src/
+    checksum: "{{ provision_nodes_cni_checksum | d(omit, true) }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Download containerd tar
+  get_url:
+    url: https://github.com/containerd/containerd/releases/download/v{{ provision_nodes_containerd_version }}/containerd-{{ provision_nodes_containerd_version }}-linux-arm64.tar.gz
+    dest: /usr/local/src/
+    checksum: "{{ provision_nodes_containerd_checksum | d(omit, true) }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Download runc binary
+  get_url:
+    url: https://github.com/opencontainers/runc/releases/download/v{{ provision_nodes_runc_version }}/runc.arm64
+    dest: /usr/local/bin/runc
+    checksum: "{{ provision_nodes_runc_checksum | d(omit, true) }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create required directories
+  file:
+    name: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  loop:
+    - /etc/cni/net.d
+    - /opt/cni/bin
+    - /var/lib/kubelet
+    - /var/lib/kube-proxy
+    - /var/lib/kubernetes
+    - /var/run/kubernetes
+    - /etc/containerd
+
+- name: Extract crictl
+  unarchive:
+    src: /usr/local/src/crictl-v{{ provision_nodes_crictl_version }}-linux-arm64.tar.gz
+    dest: /usr/local/bin
+    remote_src: true
+    creates: /usr/local/bin/crictl
+
+- name: Extract containerd
+  unarchive:
+    src: /usr/local/src/containerd-{{ provision_nodes_containerd_version }}-linux-arm64.tar.gz
+    dest: /usr/bin/
+    extra_opts:
+      - --strip=1
+    remote_src: true
+
+- name: Extract cni plugins
+  unarchive:
+    src: /usr/local/src/cni-plugins-linux-arm64-v{{ provision_nodes_cni_version }}.tgz
+    dest: /opt/cni/bin/
+    remote_src: true
+    creates: /opt/cni/bin/bridge
+
+- name: Ensure binaries are executable
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+    state: file
+  loop:
+    - /usr/local/bin/crictl
+    - /usr/local/bin/kubectl
+    - /usr/local/bin/kube-proxy
+    - /usr/local/bin/kubelet
+    - /usr/local/bin/runc
+    - /usr/bin/containerd-shim-runc-v2
+    - /usr/bin/containerd-shim-runc-v1
+    - /usr/bin/containerd-stress
+    - /usr/bin/containerd-shim
+    - /usr/bin/containerd
+    - /usr/bin/ctr
+    - /opt/cni/bin/macvlan
+    - /opt/cni/bin/static
+    - /opt/cni/bin/vlan
+    - /opt/cni/bin/portmap
+    - /opt/cni/bin/host-local
+    - /opt/cni/bin/vrf
+    - /opt/cni/bin/bridge
+    - /opt/cni/bin/tuning
+    - /opt/cni/bin/firewall
+    - /opt/cni/bin/host-device
+    - /opt/cni/bin/sbr
+    - /opt/cni/bin/loopback
+    - /opt/cni/bin/dhcp
+    - /opt/cni/bin/ptp
+    - /opt/cni/bin/ipvlan
+    - /opt/cni/bin/bandwidth
+
+- name: Create containerd configuration
+  template:
+    src: templates/containerd/config.toml.j2
+    dest: /etc/containerd/config.toml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create containerd systemd service
+  template:
+    src: templates/containerd/containerd.service.j2
+    dest: /etc/systemd/system/containerd.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Copy certificates
+  copy:
+    src: ../certs/{{ item.name }}
+    dest: /var/lib/kubelet/
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  loop:
+    - name: "{{ inventory_hostname }}.crt"
+      mode: "0644"
+    - name: "{{ inventory_hostname }}.key"
+      mode: "0600"
+    - name: ca.crt
+      mode: "0644"
+
+- name: Copy kubectl configurations
+  copy:
+    src: ../config/{{ inventory_hostname }}.kubeconfig
+    dest: /var/lib/kubelet/kubeconfig
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create kubelet config
+  template:
+    src: templates/kubelet/kubelet-config.yaml.j2
+    dest: /var/lib/kubelet/kubelet-config.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create kubelet systemd service
+  template:
+    src: templates/kubelet/kubelet.service.j2
+    dest: /etc/systemd/system/kubelet.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Create kube-proxy config file
+  template:
+    src: templates/kube-proxy/kube-proxy-config.yaml.j2
+    dest: /var/lib/kube-proxy/kube-proxy-config.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy kube-proxy configurations
+  copy:
+    src: ../config/kube-proxy.kubeconfig
+    dest: /var/lib/kube-proxy/kubeconfig
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create kube-proxy systemd service
+  template:
+    src: templates/kube-proxy/kube-proxy.service.j2
+    dest: /etc/systemd/system/kube-proxy.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+
+- name: Flush handlers if systemd requires reload
+  meta: flush_handlers
+
+- name: Enable and start worker services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - kubelet
+    - kube-proxy
+    - containerd
+
+- name: Apply flannel manifest to the cluster
+  local_action:
+    module: kubernetes.core.k8s
+    resource_definition: "{{ lookup('template', 'templates/cni/kube-flannel.yaml.j2') }}"
+    kubeconfig: ../config/admin.kubeconfig
+    state: present
+  run_once: true
+  become: false
+  tags: flannel
+
+- name: Ensure resolved.conf.d directory exists
+  file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags: coredns
+
+- name: Create DNS config in Linux to forward to CoreDNS
+  copy:
+    dest: /etc/systemd/resolved.conf.d/10-custom-dns.conf
+    content: |
+      [Resolve]
+      DNS=1.1.1.1 1.0.0.1 2606:4700:4700::1111 2606:4700:4700::1001
+      Domains=~.
+    mode: "0644"
+    owner: root
+    group: root
+  tags: coredns
+  notify:
+    - Restart systemd-resolved
+
+- name: Apply CoreDNS manifest
+  local_action:
+    module: kubernetes.core.k8s
+    resource_definition: "{{ lookup('template', 'templates/coredns/coredns.yaml.j2') }}"
+    kubeconfig: ../config/admin.kubeconfig
+    state: present
+  run_once: true
+  become: false
+  tags: coredns
