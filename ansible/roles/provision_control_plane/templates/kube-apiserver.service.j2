@@ -4,7 +4,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \
-  --advertise-address={{ ansible_all_ipv4_addresses | ipaddr('private') | first }} \
+  --advertise-address={{ ansible_eth0['ipv4']['address'] }} \
   --allow-privileged=true \
   --apiserver-count=3 \
   --audit-log-maxage=30 \
