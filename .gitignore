@@ -1,6 +1,6 @@
 rpi-image
 .vscode
-temp/mount/fstab
+temp/mount/
 README.md
 certs/
 config/
