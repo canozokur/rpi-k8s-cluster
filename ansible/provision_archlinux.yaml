@@ -155,7 +155,7 @@
         opts: bind
         state: mounted
 
-    - name: Chroot to root folder and init pacman
+    - name: Chroot to root folder and prepare OS
       shell:
         cmd: |
           arch-chroot ../temp/mount/writable <<EOF
@@ -166,6 +166,7 @@
           pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
           pacman -S --noconfirm linux-rpi
           sed -i 's_root=/dev/mmcblk0p2_root=/dev/sda2_' /boot/cmdline.txt
+          sed -i 's/$/ cgroup_enable=memory cgroup_memory=1/' /boot/cmdline.txt
           EOF
       args:
         executable: /bin/bash
