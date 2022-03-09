@@ -16,6 +16,12 @@
     - name: provision_archlinux_rpi_hostname
       prompt: Enter a hostname for your Raspberry Pi
       private: false
+    - name: provision_archlinux_user
+      prompt: Enter a username for the default user
+      private: false
+    - name: provision_archlinux_password
+      prompt: Enter password for your user
+      private: true
   tasks:
     - name: Are you sure?
       pause:
@@ -164,9 +170,24 @@
           pacman -Syyu --noconfirm
           pacman -S uboot-tools --noconfirm
           pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
-          pacman -S --noconfirm linux-rpi
+          pacman -S --noconfirm linux-rpi sudo vim
           sed -i 's_root=/dev/mmcblk0p2_root=/dev/sda2_' /boot/cmdline.txt
           sed -i 's/$/ cgroup_enable=memory cgroup_memory=1/' /boot/cmdline.txt
+          sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+          locale-gen
+          localectl set-locale LANG=en_US.UTF-8
+          useradd -m {{ provision_archlinux_user }}
+          echo "{{ provision_archlinux_user }}:{{ provision_archlinux_password }}" | chpasswd
+          usermod -aG wheel {{ provision_archlinux_user }}
+          mkdir /home/{{ provision_archlinux_user }}/.ssh
+          touch /home/{{ provision_archlinux_user }}/.ssh/authorized_keys
+          chmod 755 /home/{{ provision_archlinux_user }}/.ssh
+          chmod 644 /home/{{ provision_archlinux_user }}/.ssh/authorized_keys
+          chown {{ provision_archlinux_user }}:{{ provision_archlinux_user }} /home/{{ provision_archlinux_user }}/.ssh -R
+          echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCk/uh6KjUB8wNwLawPdZyJ9AcN0aHjspZuukQcsI773s1ghy5U4Wlhx+FEeUsZzBEcMRGf8bZzyvhb57H8B/lA7W4wz9TfLHAPu2OqE2Lu8anxqebCmjSchvfckefHe7B/J0oUtyhqOyw5+DPvi8HSbIh5/oxQqwweUGl9nqmhLZj883fnGYGsvoSKHmkuh2PpSLZQng8cGGAR7/1wakIR8XWMmDt7k+AYrTuSihJLpgiWgexZ2mTcVuEpJhhi2nC/0lKly4Czvg/EuKHDMocV0dJz8/1CVxlpO7oQvPMx4x1aPZQqUNYqmv60Voc33xM4Qg7dv4I371O/tOHAew7V queljin@thebox' > /home/queljin/.ssh/authorized_keys
+          echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-passwordless-wheel
+          chmod 440 /etc/sudoers.d/10-passwordless-wheel
+          userdel -r alarm
           EOF
       args:
         executable: /bin/bash
