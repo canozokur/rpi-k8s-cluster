@@ -1,0 +1,205 @@
+---
+- hosts: localhost
+  gather_facts: false
+  any_errors_fatal: true
+  become: true
+  vars:
+    # Configure these manually
+    provision_archlinux_mount_point: ../temp/mount
+    provision_archlinux_root_partition_size: 100GiB
+    provision_archlinux_create_third_partition: true
+  vars_prompt:
+    # These will be prompted when the playbook is run
+    - name: provision_archlinux_device
+      prompt: Which disk to provision? !! BEWARE THIS WILL DESTROY THE ENTIRE DISK !!
+      private: false
+    - name: provision_archlinux_rpi_hostname
+      prompt: Enter a hostname for your Raspberry Pi
+      private: false
+  tasks:
+    - name: Are you sure?
+      pause:
+        prompt: |-
+          Please confirm you want to use {{ provision_archlinux_device }} as your disk.
+          THIS WILL DESTROY {{ provision_archlinux_device }}
+          Press ENTER to continue, CTRL+C to abort
+
+    - name: Download latest aarch64 arch linux image
+      get_url:
+        url: http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+        dest: ../rpi-image/archlinux.tar.gz
+        checksum: md5:http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz.md5
+      become: false
+
+    - name: Read destination device info
+      community.general.parted:
+        device: "{{ provision_archlinux_device }}"
+        unit: MiB
+      register: destination_info
+
+    - name: Remove all partitions from disk
+      community.general.parted:
+        device: "{{ provision_archlinux_device }}"
+        number: "{{ item.num }}"
+        label: msdos
+        state: absent
+      loop: "{{ destination_info.partitions }}"
+
+    - name: Create boot partition
+      community.general.parted:
+        device: "{{ provision_archlinux_device }}"
+        number: 1
+        label: msdos
+        fs_type: fat32
+        part_end: 200MiB
+        align: optimal
+        state: present
+      register: dest_boot_part
+
+    - name: Create boot vfat filesystem
+      community.general.filesystem:
+        dev: "{{ provision_archlinux_device }}1"
+        fstype: vfat
+        force: true
+
+    - name: Create root partition
+      community.general.parted:
+        device: "{{ provision_archlinux_device }}"
+        number: 2
+        label: msdos
+        fs_type: ext4
+        part_start: "{{ dest_boot_part.partitions.0.end | int }}KiB"
+        part_end: "{{ provision_archlinux_root_partition_size }}"
+        state: present
+      register: dest_root_part
+
+    - name: Create root ext4 filesystem
+      community.general.filesystem:
+        dev: "{{ provision_archlinux_device }}2"
+        fstype: ext4
+        force: true
+    
+    - name: Create writable disk partition
+      community.general.parted:
+        device: "{{ provision_archlinux_device }}"
+        number: 3
+        fs_type: xfs
+        part_start: "{{ dest_root_part.partitions.1.end | int }}KiB"
+        part_end: 100%
+        state: present
+
+    - name: Create writable xfs filesystem
+      community.general.filesystem:
+        dev: "{{ provision_archlinux_device }}3"
+        fstype: xfs
+        force: true
+
+    - name: Mount the boot partition
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: vfat
+        path: ../temp/mount/boot
+        src: "{{ provision_archlinux_device }}1"
+        state: mounted
+
+    - name: Mount the root partition
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: ext4
+        path: ../temp/mount/root
+        src: "{{ provision_archlinux_device }}2"
+        state: mounted
+
+    # Unfortunately unarchive doesn't work because the archive is
+    # bsdtar instead of gnutar
+    - name: Extract contents to root partition
+      ansible.builtin.command:
+        cmd: bsdtar -xpf ../rpi-image/archlinux.tar.gz -C ../temp/mount/root
+
+    - name: Move boot contents to boot partition
+      ansible.builtin.shell:
+        cmd: mv ../temp/mount/root/boot/* ../temp/mount/boot
+
+    - name: Update fstab with the new partition name
+      ansible.builtin.copy:
+        dest: ../temp/mount/root/etc/fstab
+        content: |
+          /dev/sda1  /boot   vfat    defaults        0       0
+          /dev/sda2  /   ext4    defaults        0       0
+          /dev/sda3  /data/disk1 xfs defaults 0 0
+
+    - name: Update hostname
+      ansible.builtin.copy:
+        dest: ../temp/mount/root/etc/hostname
+        content: |
+          {{ provision_archlinux_rpi_hostname }}
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: Bind root volume
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: none
+        path: ../temp/mount/writable
+        src: ../temp/mount/root
+        opts: bind
+        state: mounted
+
+    - name: Bind boot volume
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: none
+        path: ../temp/mount/writable/boot
+        src: ../temp/mount/boot
+        opts: bind
+        state: mounted
+
+    - name: Chroot to root folder and init pacman
+      shell:
+        cmd: |
+          arch-chroot ../temp/mount/writable <<EOF
+          pacman-key --init
+          pacman-key --populate archlinuxarm
+          pacman -Syyu --noconfirm
+          pacman -S uboot-tools --noconfirm
+          sed -i 's/${devnum}:2/${devnum}:1/' /boot/boot.txt
+          cd /boot
+          /boot/mkscr
+          EOF
+      args:
+        executable: /bin/bash
+
+    - name: Unbind boot volume
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: none
+        path: ../temp/mount/writable/boot
+        src: ../temp/mount/root
+        opts: bind
+        state: unmounted
+
+    - name: Unbind root volume
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: none
+        path: ../temp/mount/writable
+        src: ../temp/mount/boot
+        opts: bind
+        state: unmounted
+
+    - name: Unmount the boot partition
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: vfat
+        path: ../temp/mount/boot
+        src: "{{ provision_archlinux_device }}1"
+        state: unmounted
+
+    - name: Unmount the root partition
+      ansible.posix.mount:
+        fstab: ../temp/mount/fstab
+        fstype: ext4
+        path: ../temp/mount/root
+        src: "{{ provision_archlinux_device }}2"
+        state: unmounted
