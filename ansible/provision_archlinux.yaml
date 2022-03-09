@@ -163,9 +163,9 @@
           pacman-key --populate archlinuxarm
           pacman -Syyu --noconfirm
           pacman -S uboot-tools --noconfirm
-          sed -i 's/${devnum}:2/${devnum}:1/' /boot/boot.txt
-          cd /boot
-          /boot/mkscr
+          pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
+          pacman -S --noconfirm linux-rpi
+          sed -i 's_root=/dev/mmcblk1_root=/dev/sda2_' /boot/cmdline.txt
           EOF
       args:
         executable: /bin/bash
