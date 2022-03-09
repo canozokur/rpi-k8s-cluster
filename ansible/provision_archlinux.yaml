@@ -165,7 +165,7 @@
           pacman -S uboot-tools --noconfirm
           pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
           pacman -S --noconfirm linux-rpi
-          sed -i 's_root=/dev/mmcblk1_root=/dev/sda2_' /boot/cmdline.txt
+          sed -i 's_root=/dev/mmcblk0p2_root=/dev/sda2_' /boot/cmdline.txt
           EOF
       args:
         executable: /bin/bash
