@@ -1,0 +1,34 @@
+---
+- name: Install base-devel package
+  package:
+    name: base-devel
+    state: present
+
+- name: Enable pacman parallel downloads
+  ansible.builtin.replace:
+    path: /etc/pacman.conf
+    regexp: '^(#ParallelDownloads)(.*)'
+    replace: 'ParallelDownloads\2'
+
+- name: Create the aur_builder user
+  become: true
+  ansible.builtin.user:
+    name: aur_builder
+    create_home: yes
+    group: wheel
+
+- name: Allow the aur_builder user to run sudo pacman without a password
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/11-install-aur_builder
+    line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+    create: yes
+    validate: 'visudo -cf %s'
+
+- name: Install yay
+  kewlfft.aur.aur:
+    name: yay
+    use: makepkg
+    state: present
+  become: true
+  become_user: aur_builder
