@@ -170,7 +170,7 @@
           pacman -Syyu --noconfirm
           pacman -S uboot-tools --noconfirm
           pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
-          pacman -S --noconfirm linux-rpi sudo vim
+          pacman -S --noconfirm linux-rpi sudo vim python
           sed -i 's_root=/dev/mmcblk0p2_root=/dev/sda2_' /boot/cmdline.txt
           sed -i 's/$/ cgroup_enable=memory cgroup_memory=1/' /boot/cmdline.txt
           sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
