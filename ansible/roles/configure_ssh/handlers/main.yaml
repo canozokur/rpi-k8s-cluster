@@ -1,0 +1,4 @@
+- name: configure_ssh_restart_service
+  service:
+    name: sshd
+    state: restarted

@@ -4,4 +4,5 @@
   any_errors_fatal: true
   become: true
   roles:
+    - role: configure_ssh
     - role: install_yay

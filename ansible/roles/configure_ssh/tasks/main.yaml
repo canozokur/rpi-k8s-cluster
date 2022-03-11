@@ -1,0 +1,10 @@
+---
+- name: Create sshd config
+  template:
+    src: templates/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - configure_ssh_restart_service
