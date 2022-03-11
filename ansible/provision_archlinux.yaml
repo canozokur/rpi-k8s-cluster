@@ -188,6 +188,7 @@
           echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-passwordless-wheel
           chmod 440 /etc/sudoers.d/10-passwordless-wheel
           userdel -r alarm
+          passwd -d root
           EOF
       args:
         executable: /bin/bash
