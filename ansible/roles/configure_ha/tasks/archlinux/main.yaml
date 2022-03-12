@@ -1,0 +1,74 @@
+---
+- name: Install keepalived
+  package:
+    name: keepalived
+    state: present
+
+- name: Ensure keepalived configuration and script directory exists
+  file:
+    path: "{{ item.name }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - name: /etc/keepalived
+      mode: '0755'
+    - name: /etc/keepalived/scripts
+      mode: '0700'
+
+- name: Enable ip forwarding and non-local ip binding
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-kubernetes-control-plane-ha.conf
+    state: present
+    reload: true
+    sysctl_set: true
+  loop:
+    - name: net.ipv4.ip_forward
+      value: 1
+    - name: net.ipv4.ip_nonlocal_bind
+      value: 1
+
+- name: Create keepalived configuration
+  template:
+    src: templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - Restart keepalived
+
+- name: Create keepalived defaults file
+  template:
+    src: templates/keepalived.default.j2
+    dest: /etc/default/keepalived
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart keepalived
+
+- name: Create keepalived kube-api notify script
+  template:
+    src: templates/notify-kube-api.sh.j2
+    dest: /etc/keepalived/scripts/notify-kube-api.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Create keepalived kube-api check script
+  template:
+    src: templates/check.sh.j2
+    dest: /etc/keepalived/scripts/check_kubeapiserver.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Enable and start the keepalived service
+  service:
+    name: keepalived
+    state: started
+    enabled: true
