@@ -161,6 +161,21 @@
         opts: bind
         state: mounted
 
+    - name: Populate /etc/hosts file
+      ansible.builtin.copy:
+        dest: ../temp/mount/writable/etc/hosts
+        content: |
+          # Host addresses
+          127.0.0.1  localhost {{ provision_archlinux_rpi_hostname }}
+          ::1        localhost ip6-localhost ip6-loopback
+          ff02::1    ip6-allnodes
+          ff02::2    ip6-allrouters
+
+          192.168.1.115 rpi01
+          192.168.1.116 rpi02
+          192.168.1.117 rpi03
+          192.168.1.118 rpi04
+
     - name: Chroot to root folder and prepare OS
       shell:
         cmd: |
