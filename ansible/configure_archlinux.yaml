@@ -1,8 +1,9 @@
 ---
 - hosts: all
-  gather_facts: false
+  gather_facts: true
   any_errors_fatal: true
   become: true
+  become_method: community.general.sudosu
   roles:
     - role: configure_ssh
     - role: install_yay
