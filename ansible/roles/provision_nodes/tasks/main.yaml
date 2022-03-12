@@ -1,4 +1,10 @@
 ---
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yaml"
+    - "{{ ansible_distribution | lower }}.yaml"
+
 - name: Set facts for k8s controller plane components
   set_fact:
     provision_nodes_components:
@@ -14,10 +20,7 @@
   package:
     name: "{{ item }}"
     state: present
-  loop:
-    - socat      #required for kubectl port-forward
-    - conntrack
-    - ipset
+  loop: "{{ provision_nodes_dependency_list }}"
 
 - name: Disable swap and remove it from fstab if present
   mount:

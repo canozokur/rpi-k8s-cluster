@@ -1,0 +1,5 @@
+---
+provision_nodes_dependency_list:
+  - socat      #required for kubectl port-forward
+  - conntrack-tools
+  - ipset
