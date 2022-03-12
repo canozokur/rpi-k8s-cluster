@@ -115,6 +115,7 @@
       kubernetes.core.helm:
         name: metallb
         chart_ref: metallb/metallb
+        kubeconfig: ../config/admin.kubeconfig
         release_namespace: metallb-system
         chart_version: 0.12.1
         values: "{{ lookup('template', 'metallb/values.yaml') | from_yaml }}"
