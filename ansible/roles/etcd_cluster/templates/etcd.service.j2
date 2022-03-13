@@ -23,6 +23,7 @@ ExecStart=/usr/local/bin/etcd \
   --initial-cluster-state new \
   --data-dir=/var/lib/etcd \
   --heartbeat-interval=2000 \
+  --log-level {{ etcd_cluster_log_level }} \
   --election-timeout=10000
 Restart=on-failure
 RestartSec=5
