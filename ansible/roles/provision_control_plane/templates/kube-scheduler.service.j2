@@ -4,8 +4,10 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-scheduler \
-  --config=/etc/kubernetes/config/kube-scheduler.yaml \
-  --v=2
+  {% if provision_control_plane_verbose_logs is true %}
+  --v=2 \
+  {% endif %}
+  --config=/etc/kubernetes/config/kube-scheduler.yaml
 Restart=on-failure
 RestartSec=5
 

@@ -15,8 +15,10 @@ ExecStart=/usr/local/bin/kube-controller-manager \
   --service-account-private-key-file=/var/lib/kubernetes/service-account.key \
   --service-cluster-ip-range={{ provision_control_plane_service_ip_range }} \
   --use-service-account-credentials=true \
-  --allocate-node-cidrs \
-  --v=2
+    {% if provision_control_plane_verbose_logs is true %}
+  --v=2 \
+  {% endif %}
+  --allocate-node-cidrs
 Restart=on-failure
 RestartSec=5
 
