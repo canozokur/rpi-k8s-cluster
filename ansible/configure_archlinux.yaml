@@ -4,6 +4,44 @@
   any_errors_fatal: true
   become: true
   become_method: community.general.sudosu
+  handlers:
+    - name: restart journald
+      service:
+        name: systemd-journald
+        state: restarted
+
   roles:
     - role: configure_ssh
     - role: install_yay
+
+  tasks:
+    - name: Install misc. packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - htop
+        - lm_sensors
+        - vim
+
+    - name: Ensure journald config directory exists
+      file:
+        dest: /etc/systemd/journald.conf.d
+        owner: root
+        group: root
+        mode: '0755'
+        state: directory
+
+    - name: Configure journald for volatile storage
+      copy:
+        dest: /etc/systemd/journald.conf.d/99-user-settings.conf
+        content: |
+          [Journal]
+          Storage=volatile
+          Compress=yes
+          SystemMaxUse=100M
+          RuntimeMaxUse=100M
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart journald
