@@ -23,6 +23,7 @@
         - htop
         - lm_sensors
         - vim
+        - lvm2 # required for rook
 
     - name: Ensure journald config directory exists
       file:
