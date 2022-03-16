@@ -4,3 +4,4 @@ temp/mount/
 README.md
 certs/
 config/
+.helmsman-tmp
