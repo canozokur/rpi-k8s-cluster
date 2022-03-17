@@ -1,0 +1,18 @@
+context: home-cluster
+
+settings:
+  kubeContext: "rpi-cluster"
+  globalMaxHistory: 3
+
+# define your environments and their k8s namespaces
+namespaces:
+  ingress-nginx:
+helmRepos:
+  ingress-nginx: "https://kubernetes.github.io/ingress-nginx"
+apps:
+  ingress-nginx:
+    namespace: "ingress-nginx"
+    enabled: true
+    chart: ingress-nginx/ingress-nginx
+    version: "4.0.18"
+    protected: true
