@@ -7,8 +7,12 @@ settings:
 # define your environments and their k8s namespaces
 namespaces:
   ingress-nginx:
+  external-dns:
+
 helmRepos:
   ingress-nginx: "https://kubernetes.github.io/ingress-nginx"
+  bitnami: "https://charts.bitnami.com/bitnami"
+
 apps:
   ingress-nginx:
     namespace: "ingress-nginx"
@@ -16,3 +20,11 @@ apps:
     chart: ingress-nginx/ingress-nginx
     version: "4.0.18"
     protected: true
+
+  external-dns:
+    namespace: "external-dns"
+    enabled: true
+    chart: bitnami/external-dns
+    version: "6.2.1"
+    protected: false
+    valuesFile: external-dns.yaml

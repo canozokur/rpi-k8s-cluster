@@ -1,0 +1,13 @@
+image:
+  registry: k8s.gcr.io
+  repository: external-dns/external-dns
+  tag: v0.10.2
+logLevel: info
+provider: cloudflare
+cloudflare:
+  secretName: "cloudflare-api-token"
+  email: "canozokur@gmail.com"
+  proxied: false
+domainFilters:
+  - pco.pink
+policy: sync
