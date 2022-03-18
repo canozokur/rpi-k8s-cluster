@@ -265,6 +265,24 @@
     mode: "0755"
   tags: coredns
 
+- name: Load br_netfilter kernel module for CoreDNS
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+  tags: coredns
+
+- name: Ensure br_netfilter module is loaded on boot
+  copy:
+    dest: /etc/modules-load.d/br_netfilter.conf
+    content: |
+      # Load br_netfilter for CoreDNS to work
+      # see: https://github.com/kubernetes/kubernetes/issues/21613#issuecomment-343190401
+      br_netfilter
+    owner: root
+    group: root
+    mode: 0644
+  tags: coredns
+
 - name: Create DNS config in Linux to forward to CoreDNS
   copy:
     dest: /etc/systemd/resolved.conf.d/10-custom-dns.conf
