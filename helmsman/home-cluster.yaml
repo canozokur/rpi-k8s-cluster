@@ -6,10 +6,21 @@ settings:
 
 # define your environments and their k8s namespaces
 namespaces:
+  media:
+    protected: false
+    limits:
+      - type: Container
+        default:
+          cpu: "300m"
+          memory: "200Mi"
+        defaultRequest:
+          cpu: "200m"
+          memory: "100Mi"
   ingress-nginx:
   external-dns:
 
 helmRepos:
+  k8s-at-home: "https://k8s-at-home.com/charts/"
   ingress-nginx: "https://kubernetes.github.io/ingress-nginx"
   bitnami: "https://charts.bitnami.com/bitnami"
 
@@ -29,3 +40,11 @@ apps:
     version: "6.2.1"
     protected: false
     valuesFile: external-dns.yaml
+
+  prowlarr:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/prowlarr
+    version: "4.2.0"
+    protected: false
+    valuesFile: prowlarr.yaml
