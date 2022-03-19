@@ -18,11 +18,13 @@ namespaces:
           memory: "100Mi"
   ingress-nginx:
   external-dns:
+  cert-manager:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
   ingress-nginx: "https://kubernetes.github.io/ingress-nginx"
   bitnami: "https://charts.bitnami.com/bitnami"
+  jetstack: "https://charts.jetstack.io"
 
 apps:
   ingress-nginx:
@@ -41,6 +43,15 @@ apps:
     protected: false
     valuesFile: external-dns.yaml
 
+  cert-manager:
+    namespace: cert-manager
+    enabled: true
+    chart: jetstack/cert-manager
+    version: "1.7.1"
+    protected: false
+    valuesFile: cert-manager.yaml
+    hooks:
+      postInstall: hooks/postInstall/cert-manager.yaml
   prowlarr:
     namespace: media
     enabled: true
