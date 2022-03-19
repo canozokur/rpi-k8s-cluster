@@ -10,13 +10,21 @@ service:
         port: 9696
 
 ingress:
-  # -- Enable and configure ingress settings for the chart under this key.
-  # @default -- See values.yaml
   main:
-    enabled: false
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/hostname: prowlarr.pco.pink
+    hosts:
+      - host: prowlarr.pco.pink
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: prowlarr-tls-cert
+        hosts:
+          - prowlarr.pco.pink
 
-# -- Configure persistence settings for the chart under this key.
-# @default -- See values.yaml
 persistence:
   config:
     enabled: enabled
