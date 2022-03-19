@@ -52,6 +52,7 @@ apps:
     valuesFile: cert-manager.yaml
     hooks:
       postInstall: hooks/postInstall/cert-manager.yaml
+
   prowlarr:
     namespace: media
     enabled: true
