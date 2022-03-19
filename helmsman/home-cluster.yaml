@@ -68,3 +68,11 @@ apps:
     version: "16.0.1"
     protected: false
     valuesFile: radarr.yaml
+
+  ombi:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/ombi
+    version: "11.2.0"
+    protected: false
+    valuesFile: ombi.yaml
