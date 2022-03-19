@@ -60,3 +60,11 @@ apps:
     version: "4.2.0"
     protected: false
     valuesFile: prowlarr.yaml
+
+  radarr:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/radarr
+    version: "16.0.1"
+    protected: false
+    valuesFile: radarr.yaml

@@ -1,0 +1,31 @@
+---
+env:
+  TZ: Europe/Helsinki
+persistence:
+  config:
+    enabled: enabled
+    type: pvc
+    mountPath: /config
+    size: 1Gi
+    retain: false
+    accessMode: ReadWriteOnce
+podSecurityContext:
+  runAsUser: 568
+  runAsGroup: 568
+  fsGroup: 568
+  fsGroupChangePolicy: "OnRootMismatch"
+ingress:
+  main:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/hostname: radarr.pco.pink
+    hosts:
+      - host: radarr.pco.pink
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: radarr-tls-cert
+        hosts:
+          - radarr.pco.pink
