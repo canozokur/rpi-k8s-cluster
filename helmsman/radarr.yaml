@@ -9,6 +9,14 @@ persistence:
     size: 1Gi
     retain: false
     accessMode: ReadWriteOnce
+  shared:
+    enabled: enabled
+    type: pvc
+    mountPath: /shared
+    existingClaim: media-shared
+    size: 1Ti
+    retain: true
+    accessMode: ReadWriteMany
 podSecurityContext:
   runAsUser: 568
   runAsGroup: 568
