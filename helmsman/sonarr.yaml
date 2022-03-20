@@ -37,3 +37,10 @@ ingress:
       - secretName: sonarr-tls-cert
         hosts:
           - sonarr.pco.pink
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 500Mi
