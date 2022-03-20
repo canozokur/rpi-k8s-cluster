@@ -1,0 +1,44 @@
+---
+env:
+  TZ: Europe/Helsinki
+persistence:
+  config:
+    enabled: enabled
+    type: pvc
+    mountPath: /config
+    size: 1Gi
+    retain: false
+    accessMode: ReadWriteOnce
+  shared:
+    enabled: enabled
+    type: pvc
+    mountPath: /shared
+    existingClaim: media-shared
+    size: 1Ti
+    retain: true
+    accessMode: ReadWriteMany
+podSecurityContext:
+  runAsUser: 568
+  runAsGroup: 568
+  fsGroup: 568
+  fsGroupChangePolicy: "OnRootMismatch"
+ingress:
+  main:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/hostname: nzbget.pco.pink
+    hosts:
+      - host: nzbget.pco.pink
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: nzbget-tls-cert
+        hosts:
+          - nzbget.pco.pink
+resources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 500Mi

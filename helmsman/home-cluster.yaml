@@ -92,3 +92,13 @@ apps:
     valuesFile: sonarr.yaml
     hooks:
       preInstall: hooks/preInstall/create-shared-pvc.yaml
+
+  nzbget:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/nzbget
+    version: "12.2.0"
+    protected: false
+    valuesFile: nzbget.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-shared-pvc.yaml
