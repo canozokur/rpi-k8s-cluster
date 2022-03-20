@@ -60,6 +60,8 @@ apps:
     version: "4.2.0"
     protected: false
     valuesFile: prowlarr.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-shared-pvc.yaml
 
   radarr:
     namespace: media
@@ -68,6 +70,8 @@ apps:
     version: "16.0.1"
     protected: false
     valuesFile: radarr.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-shared-pvc.yaml
 
   ombi:
     namespace: media
@@ -76,3 +80,5 @@ apps:
     version: "11.2.0"
     protected: false
     valuesFile: ombi.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-shared-pvc.yaml
