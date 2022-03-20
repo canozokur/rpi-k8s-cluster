@@ -24,3 +24,8 @@ ingress:
       - secretName: muskat-tls-cert
         hosts:
           - muskat.pco.pink
+resources:
+  limits:
+    cpu: 2000m
+  requests:
+    cpu: 1000m
