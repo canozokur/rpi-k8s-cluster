@@ -1,6 +1,8 @@
 ---
 env:
   TZ: Europe/Helsinki
+  PUID: 568
+  PGID: 568
 persistence:
   config:
     enabled: enabled
@@ -17,11 +19,6 @@ persistence:
     size: 1Ti
     retain: true
     accessMode: ReadWriteMany
-podSecurityContext:
-  runAsUser: 568
-  runAsGroup: 568
-  fsGroup: 568
-  fsGroupChangePolicy: "OnRootMismatch"
 ingress:
   main:
     enabled: true
@@ -41,6 +38,18 @@ resources:
   limits:
     cpu: 4000m
     memory: 4Gi
+    smarter-devices/vchiq: 1
+    smarter-devices/video10: 1
+    smarter-devices/video11: 1
+    smarter-devices/video12: 1
   requests:
     cpu: 2000m
     memory: 3Gi
+    smarter-devices/vchiq: 1
+    smarter-devices/video10: 1
+    smarter-devices/video11: 1
+    smarter-devices/video12: 1
+image:
+  registry: lscr.io
+  repository: "linuxserver/emby"
+  tag: "4.6.7.0-ls114"
