@@ -93,3 +93,13 @@ apps:
     valuesFile: nzbget.yaml
     hooks:
       preInstall: hooks/preInstall/create-shared-pvc.yaml
+
+  emby:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/emby
+    version: "3.2.0"
+    protected: false
+    valuesFile: emby.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-shared-pvc.yaml
