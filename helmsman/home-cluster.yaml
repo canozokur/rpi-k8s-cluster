@@ -10,6 +10,7 @@ namespaces:
   ingress-nginx:
   external-dns:
   cert-manager:
+  device-manager:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -103,3 +104,11 @@ apps:
     valuesFile: emby.yaml
     hooks:
       preInstall: hooks/preInstall/create-shared-pvc.yaml
+
+  smarter-device-manager:
+    namespace: device-manager
+    enabled: true
+    chart: k8s-at-home/smarter-device-manager
+    version: "6.3.0"
+    protected: false
+    valuesFile: smarter-device-manager.yaml
