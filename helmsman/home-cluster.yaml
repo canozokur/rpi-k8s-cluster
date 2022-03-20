@@ -82,3 +82,13 @@ apps:
     valuesFile: ombi.yaml
     hooks:
       preInstall: hooks/preInstall/create-shared-pvc.yaml
+
+  sonarr:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/sonarr
+    version: "16.0.1"
+    protected: false
+    valuesFile: sonarr.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-shared-pvc.yaml
