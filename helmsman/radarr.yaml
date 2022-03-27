@@ -1,6 +1,11 @@
 ---
 env:
   TZ: Europe/Helsinki
+  PGID: 568
+  PUID: 568
+image:
+  repository: linuxserver/radarr
+  tag: arm64v8-4.0.5
 persistence:
   config:
     enabled: enabled
@@ -17,11 +22,6 @@ persistence:
     size: 1Ti
     retain: true
     accessMode: ReadWriteMany
-podSecurityContext:
-  runAsUser: 568
-  runAsGroup: 568
-  fsGroup: 568
-  fsGroupChangePolicy: "OnRootMismatch"
 ingress:
   main:
     enabled: true
