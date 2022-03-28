@@ -25,6 +25,7 @@
         - vim
         - bash-completion
         - xfsprogs
+        - cpupower # to set cpu freq scaling
 
     - name: Ensure journald config directory exists
       file:
@@ -47,3 +48,12 @@
         group: root
         mode: '0644'
       notify: restart journald
+    
+    - name: Enable and start cpupower daemon
+      service:
+        name: cpupower
+        state: started
+        enabled: true
+
+    - name: Set the cpu scaling governor to performance
+      command: cpupower frequency-set -g performance
