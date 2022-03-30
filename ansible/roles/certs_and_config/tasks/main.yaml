@@ -122,3 +122,7 @@
     src: templates/encryption-config.yaml.j2
     dest: ../config/encryption-config.yaml
     mode: 0644
+
+- name: Generate SSH private and public keys for TrueNAS
+  community.crypto.openssh_keypair:
+    path: ../certs/truenas
