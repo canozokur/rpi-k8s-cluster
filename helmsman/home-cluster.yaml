@@ -113,7 +113,7 @@ apps:
 
   emby:
     namespace: media
-    enabled: true
+    enabled: false
     chart: k8s-at-home/emby
     version: "3.2.0"
     protected: false
@@ -123,7 +123,7 @@ apps:
 
   smarter-device-manager:
     namespace: device-manager
-    enabled: true
+    enabled: false
     chart: k8s-at-home/smarter-device-manager
     version: "6.3.0"
     protected: false
