@@ -191,6 +191,7 @@
           sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
           locale-gen
           localectl set-locale LANG=en_US.UTF-8
+          timedatectl set-timezone Europe/Helsinki
           useradd -m {{ provision_archlinux_user }}
           echo "{{ provision_archlinux_user }}:{{ provision_archlinux_password }}" | chpasswd
           usermod -aG wheel {{ provision_archlinux_user }}

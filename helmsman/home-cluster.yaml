@@ -11,14 +11,30 @@ namespaces:
   external-dns:
   cert-manager:
   device-manager:
+  democratic-csi:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
   ingress-nginx: "https://kubernetes.github.io/ingress-nginx"
   bitnami: "https://charts.bitnami.com/bitnami"
   jetstack: "https://charts.jetstack.io"
+  democratic-csi: "https://democratic-csi.github.io/charts/"
 
 apps:
+  truenas-nfs:
+    namespace: "democratic-csi"
+    enabled: true
+    chart: democratic-csi/democratic-csi
+    version: "0.11.1"
+    protected: false
+    valuesFile: truenas-nfs.yaml
+    setFile:
+      # api key needs to be create in TrueNAS and added into the file manually
+      # truenas.apikey file shouldn't have a newline at the end
+      driver.config.httpConnection.apiKey: ../certs/truenas.apikey
+      driver.config.sshConnection.privateKey: ../certs/truenas
+    group: truenas
+
   ingress-nginx:
     namespace: "ingress-nginx"
     enabled: true

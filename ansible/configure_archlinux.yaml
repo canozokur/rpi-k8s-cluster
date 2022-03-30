@@ -26,6 +26,7 @@
         - bash-completion
         - xfsprogs
         - cpupower # to set cpu freq scaling
+        - nfs-utils # for TrueNAS CSI
 
     - name: Ensure journald config directory exists
       file:
