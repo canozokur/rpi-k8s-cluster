@@ -89,6 +89,7 @@
       tags:
         - nodes
 
+# Manually managed kubernetes objects goes here, just to keep things clean
 - hosts: localhost
   any_errors_fatal: true
   become: false
@@ -123,3 +124,41 @@
         chart_version: 0.12.1
         values: "{{ lookup('template', 'metallb/values.yaml') | from_yaml }}"
       tags: metallb
+
+    - name: Create a service for external Emby media server
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: emby
+            namespace: media
+            labels:
+              app: emby
+          spec:
+            ports:
+              - protocol: TCP
+                port: 8096
+                targetPort: 8096
+      tags: emby
+
+    - name: Create endpoint for Emby service
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Endpoints
+          metadata:
+            name: emby
+            namespace: media
+            labels:
+              app: emby
+          subsets:
+            - addresses:
+              - ip: 192.168.1.129
+              ports:
+                - port: 8096
+      tags: emby
