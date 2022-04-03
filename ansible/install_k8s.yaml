@@ -195,3 +195,74 @@
                 - emby.pco.pink
                 secretName: emby-tls-cert
       tags: emby
+
+    - name: Create a service for nzbget on TrueNAS
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: nzbget
+            namespace: media
+            labels:
+              app: nzbget
+          spec:
+            ports:
+              - protocol: TCP
+                port: 6789
+                targetPort: 6789
+      tags: nzbget
+
+    - name: Create endpoint for nzbget service
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Endpoints
+          metadata:
+            name: nzbget
+            namespace: media
+            labels:
+              app: nzbget
+          subsets:
+            - addresses:
+              - ip: 192.168.1.129
+              ports:
+                - port: 6789
+      tags: nzbget
+
+    - name: Create ingress for nzbget
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Ingress
+          metadata:
+            name: nzbget
+            namespace: media
+            labels:
+              app: nzbget
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: nzbget.pco.pink
+              cert-manager.io/cluster-issuer: letsencrypt
+          spec:
+            rules:
+              - host: nzbget.pco.pink
+                http:
+                  paths:
+                    - backend:
+                        service:
+                          name: nzbget
+                          port:
+                            number: 6789
+                      path: /
+                      pathType: Prefix
+            tls:
+              - hosts:
+                - nzbget.pco.pink
+                secretName: nzbget-tls-cert
+      tags: nzbget
