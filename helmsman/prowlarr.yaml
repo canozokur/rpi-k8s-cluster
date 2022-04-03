@@ -1,6 +1,10 @@
 env:
   TZ: Europe/Helsinki
-
+  PUID: 568
+  PGID: 568
+image:
+  repository: linuxserver/prowlarr
+  tag: nightly-version-0.2.0.1648
 # -- Configures service settings for the chart.
 # @default -- See values.yaml
 service:
