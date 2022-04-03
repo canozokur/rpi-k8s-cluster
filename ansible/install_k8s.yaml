@@ -162,3 +162,36 @@
               ports:
                 - port: 8096
       tags: emby
+
+    - name: Create ingress for Emby
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Ingress
+          metadata:
+            name: emby
+            namespace: media
+            labels:
+              app: emby
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: emby.pco.pink
+              cert-manager.io/cluster-issuer: letsencrypt
+          spec:
+            rules:
+              - host: emby.pco.pink
+                http:
+                  paths:
+                    - backend:
+                        service:
+                          name: emby
+                          port:
+                            number: 8096
+                      path: /
+                      pathType: Prefix
+            tls:
+              - hosts:
+                - emby.pco.pink
+                secretName: emby-tls-cert
+      tags: emby
