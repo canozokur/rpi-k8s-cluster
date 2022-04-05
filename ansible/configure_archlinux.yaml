@@ -9,6 +9,11 @@
       service:
         name: systemd-journald
         state: restarted
+    
+    - name: restart multipathd
+      service:
+        name: multipathd
+        state: restarted
 
   roles:
     - role: configure_ssh
@@ -27,6 +32,8 @@
         - xfsprogs
         - cpupower # to set cpu freq scaling
         - nfs-utils # for TrueNAS CSI
+        - open-iscsi # for TrueNAS CSI
+        - multipath-tools # for TrueNAS CSI iscsi
 
     - name: Ensure journald config directory exists
       file:
@@ -58,3 +65,25 @@
 
     - name: Set the cpu scaling governor to performance
       command: cpupower frequency-set -g performance
+
+    - name: Configure multipathd for TrueNAS
+      copy:
+        dest: /etc/multipath.conf
+        content: |
+          defaults {
+            user_friendly_names yes
+            find_multipaths yes
+          }
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart multipathd
+  
+    - name: Enable iscsi services
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - multipathd
+        - iscsid
