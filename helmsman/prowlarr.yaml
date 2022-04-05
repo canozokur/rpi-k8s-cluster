@@ -33,7 +33,8 @@ persistence:
   config:
     enabled: enabled
     type: pvc
-    mountPath: /usr/local/prowlarr
+    storageClass: truenas-iscsi
+    mountPath: /config
     size: 1Gi
     retain: false
     accessMode: ReadWriteOnce

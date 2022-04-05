@@ -11,6 +11,7 @@ persistence:
     enabled: enabled
     type: pvc
     mountPath: /config
+    storageClass: truenas-iscsi
     size: 1Gi
     retain: false
     accessMode: ReadWriteOnce
@@ -40,7 +41,5 @@ ingress:
 resources:
   limits:
     cpu: 1000m
-    memory: 1Gi
   requests:
     cpu: 500m
-    memory: 500Mi
