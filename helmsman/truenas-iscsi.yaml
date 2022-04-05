@@ -2,7 +2,7 @@ csiDriver:
   name: "org.democratic-csi.iscsi"
 storageClasses:
 - name: truenas-iscsi
-  defaultClass: true
+  defaultClass: false
   reclaimPolicy: Delete
   volumeBindingMode: Immediate
   allowVolumeExpansion: true
