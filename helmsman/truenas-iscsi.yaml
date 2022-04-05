@@ -1,0 +1,55 @@
+csiDriver:
+  name: "org.democratic-csi.iscsi"
+storageClasses:
+- name: truenas-iscsi
+  defaultClass: true
+  reclaimPolicy: Delete
+  volumeBindingMode: Immediate
+  allowVolumeExpansion: true
+  parameters:
+    fsType: xfs
+  mountOptions: []
+  secrets:
+    provisioner-secret:
+    controller-publish-secret:
+    node-stage-secret:
+    node-publish-secret:
+    controller-expand-secret:
+# disable snapshots for now
+volumeSnapshotClasses: []
+driver:
+  config:
+    driver: freenas-iscsi
+    instance_id:
+    httpConnection:
+      protocol: http
+      host: 192.168.1.129
+      port: 80
+      apiKey: $TRUENAS_API_KEY
+      allowInsecure: true
+    sshConnection:
+      host: 192.168.1.129
+      port: 22
+      username: k8s
+      privateKey: $TRUENAS_PRIVATE_KEY
+    zfs:
+      cli:
+       sudoEnabled: true
+      datasetParentName: main/k8s/iscsi/v # main/k8s dataset in TrueNAS
+      detachedSnapshotsDatasetParentName: main/k8s/iscsi/s
+    iscsi:
+      targetPortal: "192.168.1.129:3260"
+      targetPortals: []
+      interface:
+      nameprefix: csi-
+      nameSuffix: "-cluster"
+      targetGroups:
+        - targetGroupPortalGroup: 1
+          targetGroupInitiatorGroup: 1
+          targetGroupAuthType: None
+      extentInsecureTpc: true
+      extentXenCompat: false
+      extentDisablePhysicalBlocksize: true
+      extentBlocksize: 4096
+      extentRpm: "5400"
+      extentAvailThreshold: 0

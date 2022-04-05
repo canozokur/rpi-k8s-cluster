@@ -35,6 +35,20 @@ apps:
       driver.config.sshConnection.privateKey: ../certs/truenas
     group: truenas
 
+  truenas-iscsi:
+    namespace: "democratic-csi"
+    enabled: true
+    chart: democratic-csi/democratic-csi
+    version: "0.11.1"
+    protected: false
+    valuesFile: truenas-iscsi.yaml
+    setFile:
+      # api key needs to be create in TrueNAS and added into the file manually
+      # truenas.apikey file shouldn't have a newline at the end
+      driver.config.httpConnection.apiKey: ../certs/truenas.apikey
+      driver.config.sshConnection.privateKey: ../certs/truenas
+    group: truenas
+
   ingress-nginx:
     namespace: "ingress-nginx"
     enabled: true
