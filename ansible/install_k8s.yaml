@@ -255,9 +255,10 @@
               app: nzbget
           subsets:
             - addresses:
-              - ip: 192.168.1.129
+              - ip: 192.168.100.3
               ports:
                 - port: 6789
+                  protocol: TCP
       tags: nzbget
 
     - name: Create ingress for nzbget
