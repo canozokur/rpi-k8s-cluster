@@ -142,3 +142,11 @@ apps:
     version: "6.3.0"
     protected: false
     valuesFile: smarter-device-manager.yaml
+
+  bazarr:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/bazarr
+    version: "10.3.0"
+    protected: false
+    valuesFile: bazarr.yaml
