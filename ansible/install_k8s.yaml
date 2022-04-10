@@ -293,3 +293,75 @@
                 - nzbget.pco.pink
                 secretName: nzbget-tls-cert
       tags: nzbget
+
+    - name: Create a service for qbit on TrueNAS
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: qbit
+            namespace: media
+            labels:
+              app: qbit
+          spec:
+            ports:
+              - protocol: TCP
+                port: 8080
+                targetPort: 8080
+      tags: qbit
+
+    - name: Create endpoint for qbit service
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Endpoints
+          metadata:
+            name: qbit
+            namespace: media
+            labels:
+              app: qbit
+          subsets:
+            - addresses:
+              - ip: 192.168.100.4
+              ports:
+                - port: 8080
+                  protocol: TCP
+      tags: qbit
+
+    - name: Create ingress for qbit
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Ingress
+          metadata:
+            name: qbit
+            namespace: media
+            labels:
+              app: qbit
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: qbit.pco.pink
+              cert-manager.io/cluster-issuer: letsencrypt
+          spec:
+            rules:
+              - host: qbit.pco.pink
+                http:
+                  paths:
+                    - backend:
+                        service:
+                          name: qbit
+                          port:
+                            number: 8080
+                      path: /
+                      pathType: Prefix
+            tls:
+              - hosts:
+                - qbit.pco.pink
+                secretName: qbit-tls-cert
+      tags: qbit
