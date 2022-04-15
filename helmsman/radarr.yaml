@@ -5,7 +5,7 @@ env:
   PUID: 568
 image:
   repository: linuxserver/radarr
-  tag: arm64v8-4.0.5
+  tag: 4.1.0
 persistence:
   config:
     enabled: enabled
