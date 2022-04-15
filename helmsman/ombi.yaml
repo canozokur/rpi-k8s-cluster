@@ -3,7 +3,7 @@ env:
   TZ: Europe/Helsinki
 image:
   registry: linuxserver/ombi
-  tag: 4.15.4-development
+  tag: 4.16.11
 persistence:
   config:
     enabled: enabled
