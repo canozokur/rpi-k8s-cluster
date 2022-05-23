@@ -365,3 +365,22 @@
                 - qbit.pco.pink
                 secretName: qbit-tls-cert
       tags: qbit
+
+    - name: Create ingress for V Rising server
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          kind: Service
+          apiVersion: v1
+          metadata:
+            name: vrising-server
+            namespace: default
+            labels:
+              app: vrising-server
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: vrising.pco.pink
+          spec:
+            type: ExternalName
+            externalName: 212.149.199.26
+      tags: vrising
