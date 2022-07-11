@@ -141,7 +141,7 @@
             ports:
               - protocol: TCP
                 port: 8096
-                targetPort: 8096
+                targetPort: 9096
       tags: emby
 
     - name: Create endpoint for Emby service
@@ -158,9 +158,9 @@
               app: emby
           subsets:
             - addresses:
-              - ip: 192.168.100.2
+              - ip: 192.168.1.129
               ports:
-                - port: 8096
+                - port: 9096
       tags: emby
 
     - name: Create ingress for Emby
