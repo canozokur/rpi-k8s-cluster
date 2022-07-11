@@ -45,7 +45,7 @@ driver:
       datasetPermissionsUser: 1000 # create this user and group in TrueNAS
       datasetPermissionsGroup: 1000
     nfs:
-      shareHost: 192.168.1.129
+      shareHost: 192.168.100.100
       shareAlldirs: false
       shareAllowedHosts: []
       shareAllowedNetworks: []

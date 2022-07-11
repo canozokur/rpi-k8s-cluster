@@ -38,7 +38,7 @@ driver:
       datasetParentName: main/k8s/iscsi/v # main/k8s dataset in TrueNAS
       detachedSnapshotsDatasetParentName: main/k8s/iscsi/s
     iscsi:
-      targetPortal: "192.168.1.129:3260"
+      targetPortal: "192.168.100.100:3260"
       targetPortals: []
       interface:
       nameprefix: csi-
