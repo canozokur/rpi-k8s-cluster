@@ -237,8 +237,8 @@
           spec:
             ports:
               - protocol: TCP
-                port: 6789
-                targetPort: 6789
+                port: 10057
+                targetPort: 10057
       tags: nzbget
 
     - name: Create endpoint for nzbget service
@@ -255,9 +255,9 @@
               app: nzbget
           subsets:
             - addresses:
-              - ip: 192.168.100.3
+              - ip: 192.168.1.129
               ports:
-                - port: 6789
+                - port: 10057
                   protocol: TCP
       tags: nzbget
 
@@ -285,7 +285,7 @@
                         service:
                           name: nzbget
                           port:
-                            number: 6789
+                            number: 10057
                       path: /
                       pathType: Prefix
             tls:
@@ -309,8 +309,8 @@
           spec:
             ports:
               - protocol: TCP
-                port: 8080
-                targetPort: 8080
+                port: 10095
+                targetPort: 10095
       tags: qbit
 
     - name: Create endpoint for qbit service
@@ -327,9 +327,9 @@
               app: qbit
           subsets:
             - addresses:
-              - ip: 192.168.100.4
+              - ip: 192.168.1.129
               ports:
-                - port: 8080
+                - port: 10095
                   protocol: TCP
       tags: qbit
 
@@ -357,7 +357,7 @@
                         service:
                           name: qbit
                           port:
-                            number: 8080
+                            number: 10095
                       path: /
                       pathType: Prefix
             tls:
