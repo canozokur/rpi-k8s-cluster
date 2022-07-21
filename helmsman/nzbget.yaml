@@ -28,6 +28,7 @@ ingress:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt
       external-dns.alpha.kubernetes.io/hostname: nzbget.pco.pink
+      nginx.ingress.kubernetes.io/proxy-body-size: 100m
     hosts:
       - host: nzbget.pco.pink
         paths:
