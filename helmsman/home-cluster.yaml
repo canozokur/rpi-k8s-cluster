@@ -25,13 +25,14 @@ helmRepos:
   metallb: "https://metallb.github.io/metallb"
 
 apps:
-  metallb-private:
+  metallb-internal:
     namespace: "metallb-system"
     enabled: true
     chart: metallb/metallb
     version: "0.12.1"
     protected: false
-    valuesFile: metallb-private.yaml
+    valuesFile: metallb-internal.yaml
+
 
   truenas-nfs:
     namespace: "democratic-csi"
