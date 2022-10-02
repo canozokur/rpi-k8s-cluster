@@ -5,3 +5,4 @@ README.md
 certs/
 config/
 .helmsman-tmp
+ansible/cache
