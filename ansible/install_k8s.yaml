@@ -69,7 +69,6 @@
           kind: ClusterRoleBinding
           metadata:
             name: system:kube-apiserver
-            namespace: ""
           roleRef:
             apiGroup: rbac.authorization.k8s.io
             kind: ClusterRole
@@ -161,6 +160,7 @@
               - ip: 192.168.1.129
               ports:
                 - port: 9096
+                  protocol: "TCP"
       tags: emby
 
     - name: Create ingress for Emby
