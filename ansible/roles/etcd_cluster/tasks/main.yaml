@@ -23,6 +23,7 @@
     url: https://github.com/etcd-io/etcd/releases/download/{{ etcd_cluster_release }}/etcd-{{ etcd_cluster_release }}-linux-arm64.tar.gz
     dest: /tmp
     checksum: sha256:https://github.com/etcd-io/etcd/releases/download/{{ etcd_cluster_release }}/SHA256SUMS
+  check_mode: no
 
 
 - name: Extract etcd to /usr/local/bin
