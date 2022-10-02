@@ -12,6 +12,9 @@ namespaces:
   cert-manager:
   device-manager:
   democratic-csi:
+  metallb-system:
+    labels:
+      app: metallb
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -19,8 +22,17 @@ helmRepos:
   bitnami: "https://charts.bitnami.com/bitnami"
   jetstack: "https://charts.jetstack.io"
   democratic-csi: "https://democratic-csi.github.io/charts/"
+  metallb: "https://metallb.github.io/metallb"
 
 apps:
+  metallb-private:
+    namespace: "metallb-system"
+    enabled: true
+    chart: metallb/metallb
+    version: "0.12.1"
+    protected: false
+    valuesFile: metallb-private.yaml
+
   truenas-nfs:
     namespace: "democratic-csi"
     enabled: true
