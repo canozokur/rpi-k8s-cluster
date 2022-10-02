@@ -92,38 +92,7 @@
 - hosts: localhost
   any_errors_fatal: true
   become: false
-  vars:
-    metallb_loadbalancer_range: 192.168.50.0/24
   tasks:
-    - name: Create a new k8s namespace for metallb
-      kubernetes.core.k8s:
-        state: present
-        kubeconfig: ../config/admin.kubeconfig
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: metallb-system
-            labels:
-              app: metallb
-      tags: metallb
-
-    - name: Add MetalLB helm repo
-      kubernetes.core.helm_repository:
-        name: metallb
-        repo_url: https://metallb.github.io/metallb
-      tags: metallb
-
-    - name: Deploy MetalLB version 0.12.1
-      kubernetes.core.helm:
-        name: metallb
-        chart_ref: metallb/metallb
-        kubeconfig: ../config/admin.kubeconfig
-        release_namespace: metallb-system
-        chart_version: 0.12.1
-        values: "{{ lookup('template', 'metallb/values.yaml') | from_yaml }}"
-      tags: metallb
-
     - name: Create a service for external Emby media server
       kubernetes.core.k8s:
         state: present
