@@ -15,6 +15,11 @@ namespaces:
   metallb-system:
     labels:
       app: metallb
+      # see the note in https://metallb.universe.tf/installation/
+      pod-security.kubernetes.io/enforce: privileged
+      pod-security.kubernetes.io/audit: privileged
+      pod-security.kubernetes.io/warn: privileged
+
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -27,12 +32,21 @@ helmRepos:
 apps:
   metallb-internal:
     namespace: "metallb-system"
-    enabled: true
+    enabled: false
     chart: metallb/metallb
-    version: "0.12.1"
+    version: "0.13.5"
     protected: false
     valuesFile: metallb-internal.yaml
+    hooks:
+      postInstall: hooks/postInstall/metallb-internal.yaml
 
+  metallb-external:
+    namespace: "metallb-system"
+    enabled: false
+    chart: metallb/metallb
+    version: "0.13.5"
+    protected: false
+    valuesFile: metallb-external.yaml
 
   truenas-nfs:
     namespace: "democratic-csi"
