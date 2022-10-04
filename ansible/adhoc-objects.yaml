@@ -264,3 +264,46 @@
             type: ExternalName
             externalName: 212.149.199.26
       tags: vrising
+
+    - name: Create internal ip pool for metallb
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          kind: IPAddressPool
+          apiVersion: metallb.io/v1beta1
+          metadata:
+            name: internal
+            namespace: metallb-system
+          spec:
+            addresses:
+              - 192.168.50.0-192.168.50.254
+      tags: metallb
+
+    - name: Create external ip pool for metallb
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          kind: IPAddressPool
+          apiVersion: metallb.io/v1beta1
+          metadata:
+            name: external
+            namespace: metallb-system
+          spec:
+            addresses:
+              - 192.168.50.255/32
+            autoAssign: false
+      tags: metallb
+
+    - name: Create L2 advertisement for metallb
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          kind: L2Advertisement
+          apiVersion: metallb.io/v1beta1
+          metadata:
+            name: home-net
+            namespace: metallb-system
+      tags: metallb
