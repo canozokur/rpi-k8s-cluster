@@ -31,8 +31,6 @@ apps:
     chart: metallb/metallb
     version: "0.12.1"
     protected: false
-    valuesFile: metallb-internal.yaml
-
 
   truenas-nfs:
     namespace: "democratic-csi"
