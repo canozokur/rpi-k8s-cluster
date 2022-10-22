@@ -310,3 +310,75 @@
             name: home-net
             namespace: metallb-system
       tags: metallb
+
+    - name: Create a service for bazarr on TrueNAS
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: bazarr
+            namespace: media
+            labels:
+              app: bazarr
+          spec:
+            ports:
+              - protocol: TCP
+                port: 6767
+                targetPort: 6767
+      tags: bazarr
+
+    - name: Create endpoint for bazarr service
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Endpoints
+          metadata:
+            name: bazarr
+            namespace: media
+            labels:
+              app: bazarr
+          subsets:
+            - addresses:
+              - ip: 192.168.1.129
+              ports:
+                - port: 6767
+                  protocol: TCP
+      tags: bazarr
+
+    - name: Create ingress for bazarr
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Ingress
+          metadata:
+            name: bazarr
+            namespace: media
+            labels:
+              app: bazarr
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: bazarr.pco.pink
+              cert-manager.io/cluster-issuer: letsencrypt
+          spec:
+            rules:
+              - host: bazarr.pco.pink
+                http:
+                  paths:
+                    - backend:
+                        service:
+                          name: bazarr
+                          port:
+                            number: 6767
+                      path: /
+                      pathType: Prefix
+            tls:
+              - hosts:
+                - bazarr.pco.pink
+                secretName: bazarr-tls-cert
+      tags: bazarr
