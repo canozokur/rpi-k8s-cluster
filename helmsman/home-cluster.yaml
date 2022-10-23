@@ -156,7 +156,7 @@ apps:
 
   bazarr:
     namespace: media
-    enabled: true
+    enabled: false
     chart: k8s-at-home/bazarr
     version: "10.3.0"
     protected: false
