@@ -72,7 +72,7 @@ apps:
     namespace: "external-dns"
     enabled: true
     chart: bitnami/external-dns
-    version: "6.2.1"
+    version: "6.11.2"
     protected: false
     valuesFile: external-dns.yaml
 
