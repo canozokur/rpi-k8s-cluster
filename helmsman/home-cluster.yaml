@@ -68,6 +68,14 @@ apps:
     protected: false
     valuesFile: ingress-nginx.yaml
 
+  ingress-nginx-external:
+    namespace: "ingress-nginx"
+    enabled: true
+    chart: ingress-nginx/ingress-nginx
+    version: "4.0.18"
+    protected: false
+    valuesFile: external-ingress-nginx.yaml
+
   external-dns:
     namespace: "external-dns"
     enabled: true

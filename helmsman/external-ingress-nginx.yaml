@@ -1,0 +1,10 @@
+controller:
+  electionID: external-ingress-controller
+  ingressClassResource:
+    name: external-nginx  # default: nginx
+    enabled: true
+    default: false
+    controllerValue: "k8s.io/external-ingress-nginx"  # default: k8s.io/ingress-nginx
+  service:
+    annotations:
+      metallb.universe.tf/address-pool: external
