@@ -1,0 +1,27 @@
+---
+authSecret:
+  enabled: true
+githubWebhookServer:
+  enabled: true
+  secret:
+    enabled: true
+    name: github-webhook-server
+  service:
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: arc.pco.pink
+  ingress:
+    enabled: true
+    ingressClassName: external-nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/target: "212.149.199.26"
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    hosts:
+      - host: arc.pco.pink
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: arc-tls-cert
+        hosts:
+          - arc.pco.pink

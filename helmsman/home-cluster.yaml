@@ -15,6 +15,7 @@ namespaces:
   metallb-system:
     labels:
       app: metallb
+  actions-runner-system:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -23,8 +24,18 @@ helmRepos:
   jetstack: "https://charts.jetstack.io"
   democratic-csi: "https://democratic-csi.github.io/charts/"
   metallb: "https://metallb.github.io/metallb"
+  actions-runner-controller: "https://actions-runner-controller.github.io/actions-runner-controller"
 
 apps:
+  actions-runner-controller:
+    namespace: "actions-runner-system"
+    enabled: true
+    wait: true
+    chart: actions-runner-controller/actions-runner-controller
+    version: "0.21.0"
+    protected: false
+    valuesFile: actions-runner-controller.yaml
+
   metallb:
     namespace: "metallb-system"
     enabled: true
