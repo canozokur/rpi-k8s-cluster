@@ -382,3 +382,45 @@
                 - bazarr.pco.pink
                 secretName: bazarr-tls-cert
       tags: bazarr
+
+    - name: Create namespace for Github self-hosted runners
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: github-runners
+
+    - name: Create Github RunnerDeployment for mysql-operator
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: actions.summerwind.dev/v1alpha1
+          kind: RunnerDeployment
+          metadata:
+            name: mysql-operator-runners
+            namespace: github-runners
+
+    - name: Create Github HPA for mysql-operator-runners
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: actions.summerwind.dev/v1alpha1
+          kind: HorizontalRunnerAutoscaler
+          metadata:
+            name: mysql-operator-runners
+            namespace: github-runners
+          spec:
+            minReplicas: 0
+            maxReplicas: 10
+            scaleTargetRef:
+              kind: RunnerDeployment
+              name: mysql-operator-runners
+            scaleUpTriggers:
+              - githubEvent:
+                  workflowJob: {}
+                duration: "30m"
