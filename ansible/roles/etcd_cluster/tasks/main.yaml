@@ -24,6 +24,8 @@
     dest: /tmp
     checksum: sha256:https://github.com/etcd-io/etcd/releases/download/{{ etcd_cluster_release }}/SHA256SUMS
   check_mode: no
+  notify:
+    - Restart etcd service
 
 
 - name: Extract etcd to /usr/local/bin
@@ -36,6 +38,8 @@
       - '*/etcd'
       - '*/etcdctl'
     remote_src: true
+  notify:
+    - Restart etcd service
 
 - name: Copy CA and k8s api certs to nodes
   ansible.builtin.copy:
