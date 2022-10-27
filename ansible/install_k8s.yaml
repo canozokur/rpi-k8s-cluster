@@ -13,6 +13,9 @@
 - hosts: etcd
   any_errors_fatal: true
   become: true
+  serial: 1
+  tags:
+    - etcd
   roles:
     - role: etcd_cluster
       vars:
