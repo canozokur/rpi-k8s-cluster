@@ -1,3 +1,0 @@
-- import_playbook: local_blemished.yml
-- import_playbook: paramiko_unblemished.yml
-- import_playbook: ssh_blemished.yml
