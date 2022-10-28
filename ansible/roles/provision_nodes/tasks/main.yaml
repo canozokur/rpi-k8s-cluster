@@ -37,6 +37,9 @@
     group: root
     mode: 0755
   loop: "{{ provision_nodes_components }}"
+  register: provision_nodes_dl_k8s_components
+  retries: 4
+  until: provision_nodes_dl_k8s_components is success
 
 - name: Download crictl tar
   get_url:

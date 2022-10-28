@@ -32,6 +32,9 @@
     group: root
     mode: 0755
   loop: "{{ provision_control_plane_components }}"
+  register: provision_control_plane_dl_k8s_components
+  retries: 4
+  until: provision_control_plane_dl_k8s_components is success
 
 - name: Copy certificates
   copy:
