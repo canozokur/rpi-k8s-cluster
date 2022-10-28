@@ -2,14 +2,10 @@
 - name: Set facts for k8s controller plane components
   set_fact:
     provision_control_plane_components:
-      - name: kube-apiserver
-        checksum: "{{ provision_control_plane_kube_apiserver_checksum }}"
-      - name: kube-controller-manager
-        checksum: "{{ provision_control_plane_kube_controller_manager_checksum }}"
-      - name: kube-scheduler
-        checksum: "{{ provision_control_plane_kube_scheduler_checksum }}"
-      - name: kubectl
-        checksum: "{{ provision_control_plane_kubectl_checksum }}"
+      - kube-apiserver
+      - kube-controller-manager
+      - kube-scheduler
+      - kubectl
 
 - name: Compose k8s download url
   set_fact:
@@ -29,9 +25,9 @@
 
 - name: Download k8s components
   get_url:
-    url: "{{ provision_control_plane_k8s_url }}/{{ item.name }}"
+    url: "{{ provision_control_plane_k8s_url }}/{{ item }}"
     dest: /usr/local/bin/
-    checksum: "{{ item.checksum | d(omit, true) }}"
+    checksum: "sha256:{{ lookup('url', provision_control_plane_k8s_url + '/' + item + '.sha256') }}"
     owner: root
     group: root
     mode: 0755
