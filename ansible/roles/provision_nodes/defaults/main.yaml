@@ -1,7 +1,7 @@
 ---
-provision_nodes_k8s_version: v1.23.13
-provision_nodes_crictl_version: 1.23.0
-provision_nodes_crictl_checksum: "sha256:91094253e77094435027998a99b9b6a67b0baad3327975365f7715a1a3bd9595"
+provision_nodes_k8s_version: v1.24.7
+provision_nodes_crictl_version: 1.24.2
+provision_nodes_crictl_checksum: "sha256:c1410b15d5009287c94eabcc63b14dba68726771fa87fef743867df2eea0a6d5"
 provision_nodes_runc_version: 1.1.4
 provision_nodes_runc_checksum: "sha256:dbb71e737eaef454a406ce21fd021bd8f1b35afb7635016745992bbd7c17a223"
 provision_nodes_cni_version: 1.1.1
