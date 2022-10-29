@@ -403,6 +403,12 @@
           metadata:
             name: mysql-operator-runners
             namespace: github-runners
+          spec:
+            template:
+              spec:
+                dockerMTU: 1450 # thanks to flannel this is 1450 on hosts and can't be changed
+                                # this created so much trouble... failed TLS handshakes were all over the place
+                                # should stay here if you use DinD to build your images.
 
     - name: Create Github HPA for mysql-operator-runners
       kubernetes.core.k8s:
