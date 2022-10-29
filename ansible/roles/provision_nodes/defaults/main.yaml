@@ -1,5 +1,5 @@
 ---
-provision_nodes_k8s_version: v1.24.7
+provision_nodes_k8s_version: v1.25.3
 provision_nodes_crictl_version: 1.24.2
 provision_nodes_crictl_checksum: "sha256:c1410b15d5009287c94eabcc63b14dba68726771fa87fef743867df2eea0a6d5"
 provision_nodes_runc_version: 1.1.4
