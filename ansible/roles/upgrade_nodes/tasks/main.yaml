@@ -1,0 +1,65 @@
+---
+- name: Cordon node
+  kubernetes.core.k8s_drain:
+    kubeconfig: ../config/admin.kubeconfig
+    state: cordon
+    name: "{{ inventory_hostname }}"
+  delegate_to: localhost
+
+- name: Drain node
+  kubernetes.core.k8s_drain:
+    kubeconfig: ../config/admin.kubeconfig
+    state: drain
+    delete_options:
+      delete_emptydir_data: true
+      ignore_daemonsets: true
+    name: "{{ inventory_hostname }}"
+  delegate_to: localhost
+
+- name: Include provision_nodes role
+  ansible.builtin.include_role:
+    name: provision_nodes
+    apply:
+      become: true
+  vars:
+    provision_nodes_pod_ip_range: 172.28.0.0/16
+    provision_nodes_k8s_version: "{{ upgrade_provision_nodes_k8s_version }}"
+
+- name: Reboot node
+  ansible.builtin.reboot:
+  become: true
+
+- name: Wait for node to become Ready
+  kubernetes.core.k8s_info:
+    kubeconfig: ../config/admin.kubeconfig
+    kind: Node
+    name: "{{ inventory_hostname }}"
+    wait: true
+    wait_condition:
+      type: Ready
+      status: true
+      reason: KubeletReady
+    wait_sleep: 5
+    wait_timeout: 120
+  delegate_to: localhost
+
+- name: Wait for CSI drivers to become ready
+  kubernetes.core.k8s_info:
+    kubeconfig: ../config/admin.kubeconfig
+    kind: Node
+    name: "{{ inventory_hostname }}"
+    wait: true
+    wait_condition:
+      type: Ready
+      status: true
+      reason: KubeletReady
+    wait_sleep: 5
+    wait_timeout: 120
+  delegate_to: localhost
+
+- name: Uncordon node
+  kubernetes.core.k8s_drain:
+    kubeconfig: ../config/admin.kubeconfig
+    state: uncordon
+    name: "{{ inventory_hostname }}"
+  delegate_to: localhost
