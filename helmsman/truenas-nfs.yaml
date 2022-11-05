@@ -50,6 +50,6 @@ driver:
       shareAllowedHosts: []
       shareAllowedNetworks: []
       shareMaprootUser: root
-      shareMaprootGroup: wheel
+      shareMaprootGroup: root
       shareMapallUser: ""
       shareMapallGroup: ""
