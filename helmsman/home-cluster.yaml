@@ -26,15 +26,15 @@ helmRepos:
   democratic-csi: "https://democratic-csi.github.io/charts/"
   metallb: "https://metallb.github.io/metallb"
   actions-runner-controller: "https://actions-runner-controller.github.io/actions-runner-controller"
-  mysql-operator: "https://mysql.github.io/mysql-operator/"
+  mysql-operator-arm64: "https://canozokur.github.io/mysql-operator/"
 
 apps:
   mysql-operator:
     namespace: "mysql-operator"
     enabled: true
     wait: true
-    chart: mysql-operator/mysql-operator
-    version: "2.0.7"
+    chart: mysql-operator-arm64/mysql-operator
+    version: "0.0.2"
     protected: false
     valuesFile: mysql-operator.yaml
 

@@ -1,4 +1,0 @@
-# ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
-image:
-  registry: ghcr.io
-  repository: canozokur
