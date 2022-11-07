@@ -9,8 +9,18 @@ storageClasses:
   parameters:
     fsType: nfs
   mountOptions:
+  - nfsvers=4.2
   - noatime
-  - nfsvers=4
+  - noacl
+  - nocto
+  - nodiratime
+  - rsize=131072
+  - wsize=131072
+  - hard
+  - proto=tcp
+  - intr
+  - timeo=150
+  - retrans=3
   secrets:
     provisioner-secret:
     controller-publish-secret:
