@@ -1,5 +1,6 @@
 # Manually managed kubernetes objects goes here, just to keep things clean
 - hosts: localhost
+  connection: local
   any_errors_fatal: true
   become: false
   tasks:
@@ -409,6 +410,7 @@
                 dockerMTU: 1450 # thanks to flannel this is 1450 on hosts and can't be changed
                                 # this created so much trouble... failed TLS handshakes were all over the place
                                 # should stay here if you use DinD to build your images.
+                repository: canozokur/mysql-operator
 
     - name: Create Github HPA for mysql-operator-runners
       kubernetes.core.k8s:
@@ -426,6 +428,45 @@
             scaleTargetRef:
               kind: RunnerDeployment
               name: mysql-operator-runners
+            scaleUpTriggers:
+              - githubEvent:
+                  workflowJob: {}
+                duration: "30m"
+
+    - name: Create Github RunnerDeployment for mysql-docker
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: actions.summerwind.dev/v1alpha1
+          kind: RunnerDeployment
+          metadata:
+            name: mysql-docker-runners
+            namespace: github-runners
+          spec:
+            template:
+              spec:
+                dockerMTU: 1450 # thanks to flannel this is 1450 on hosts and can't be changed
+                                # this created so much trouble... failed TLS handshakes were all over the place
+                                # should stay here if you use DinD to build your images.
+                repository: canozokur/mysql-docker
+
+    - name: Create Github HPA for mysql-docker-runners
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: ../config/admin.kubeconfig
+        definition:
+          apiVersion: actions.summerwind.dev/v1alpha1
+          kind: HorizontalRunnerAutoscaler
+          metadata:
+            name: mysql-docker-runners
+            namespace: github-runners
+          spec:
+            minReplicas: 0
+            maxReplicas: 10
+            scaleTargetRef:
+              kind: RunnerDeployment
+              name: mysql-docker-runners
             scaleUpTriggers:
               - githubEvent:
                   workflowJob: {}
