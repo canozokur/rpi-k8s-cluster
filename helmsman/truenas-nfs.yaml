@@ -21,6 +21,7 @@ storageClasses:
   - intr
   - timeo=150
   - retrans=3
+  - async
   secrets:
     provisioner-secret:
     controller-publish-secret:
