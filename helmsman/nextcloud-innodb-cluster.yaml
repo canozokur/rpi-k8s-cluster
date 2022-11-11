@@ -1,0 +1,37 @@
+---
+credentials:
+  root:
+    user: "root"
+    host: "%"
+serverInstances: 3
+routerInstances: 1
+tls:
+  useSelfSigned: true
+podSpec:
+  initContainers:
+    - name: fixdatadir
+      image: ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
+    - name: initconf
+      image: ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
+  containers:
+    - name: sidecar
+      image: ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
+router:
+  podSpec:
+    containers:
+      - name: router
+        image: ghcr.io/canozokur/mysql-router:8.0.31
+datadirVolumeClaimTemplate:
+  storageClassName: truenas-iscsi
+  resources:
+    requests:
+      storage: 100Gi
+serverConfig:
+  mycnf: |
+    [mysqld]
+    innodb_file_per_table=ON
+    character_set_server = utf8mb4
+    collation_server = utf8mb4_general_ci
+    sync_binlog = 0
+    innodb_flush_log_at_trx_commit = 2
+    innodb_flush_method = O_DIRECT

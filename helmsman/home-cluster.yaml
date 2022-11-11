@@ -17,6 +17,7 @@ namespaces:
       app: metallb
   actions-runner-system:
   mysql-operator:
+  nextcloud:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -27,6 +28,7 @@ helmRepos:
   metallb: "https://metallb.github.io/metallb"
   actions-runner-controller: "https://actions-runner-controller.github.io/actions-runner-controller"
   mysql-operator-arm64: "https://canozokur.github.io/mysql-operator/"
+  nextcloud: https://nextcloud.github.io/helm/
 
 apps:
   mysql-operator:
@@ -36,7 +38,31 @@ apps:
     chart: mysql-operator-arm64/mysql-operator
     version: "0.0.2"
     protected: false
-    valuesFile: mysql-operator.yaml
+
+  nextcloud:
+    namespace: "nextcloud"
+    enabled: true
+    chart: nextcloud/nextcloud
+    version: "3.3.0"
+    protected: false
+    valuesFile: nextcloud.yaml
+    set:
+      nextcloud.password: "$NEXTCLOUD_ADMIN_PASS"
+      externalDatabase.password: "$NEXTCLOUD_DB_PASSWORD"
+      metrics.token: "$NEXTCLOUD_METRICS_TOKEN"
+      nextcloud.mail.smtp.name: "$POSTMARK_SMTP_TOKEN"
+      nextcloud.mail.smtp.password: "$POSTMARK_SMTP_TOKEN"
+
+  nextcloud-innodb-cluster:
+    namespace: "nextcloud"
+    enabled: true
+    wait: true
+    chart: mysql-operator-arm64/mysql-innodbcluster
+    version: "0.0.2"
+    protected: false
+    valuesFile: nextcloud-innodb-cluster.yaml
+    set:
+      credentials.root.password: "$NEXTCLOUD_DB_PASSWORD"
 
   actions-runner-controller:
     namespace: "actions-runner-system"
