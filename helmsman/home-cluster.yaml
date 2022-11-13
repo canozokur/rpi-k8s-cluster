@@ -55,6 +55,10 @@ apps:
       metrics.token: "$NEXTCLOUD_METRICS_TOKEN"
       nextcloud.mail.smtp.name: "$POSTMARK_SMTP_TOKEN"
       nextcloud.mail.smtp.password: "$POSTMARK_SMTP_TOKEN"
+      nextcloud.extraEnv[0].name: "REDIS_HOST_PASSWORD"
+      nextcloud.extraEnv[0].value: "$NEXTCLOUD_REDIS_PASSWORD"
+      nextcloud.extraEnv[1].name: "REDIS_HOST"
+      nextcloud.extraEnv[1].value: "nextcloud-redis"
 
   nextcloud-innodb-cluster:
     namespace: "nextcloud"

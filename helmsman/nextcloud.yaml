@@ -1,3 +1,4 @@
+replicaCount: 2
 image:
   flavor: fpm-alpine
 ingress:
@@ -19,6 +20,14 @@ ingress:
 nextcloud:
   host: nx.pco.pink
   username: admin
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+      timeoutSeconds: 600
+      intervalSeconds: 5
+      updatePeriodSeconds: 5
   mail:
     enabled: true
     fromAddress: nx
@@ -224,6 +233,8 @@ persistence:
     existingClaim: nextcloud-data
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 1200
+  # initialDelaySeconds: 5500 # yes it takes ~1h on NFS with rsync :facepalm:
+                              # this needs to be enabled on first deploy
+                              # future deploys won't need it
 cronjob:
   enabled: true
