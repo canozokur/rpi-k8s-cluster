@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 4
 image:
   flavor: fpm-alpine
 ingress:
@@ -39,11 +39,13 @@ nextcloud:
       port: 587
       authtype: LOGIN
   phpConfigs:
-    process-manager.conf: |-
+    www.conf: |-
       [www]
-      pm = dynamic
-      pm.max_children = 20
-      pm.max_requests = 1000
+      user = www-data
+      group = www-data
+      listen = 127.0.0.1:9000
+      pm = static
+      pm.max_children = 16
   configs:
     proxy.config.php: |-
       <?php
