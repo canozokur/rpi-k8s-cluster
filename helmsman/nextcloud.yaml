@@ -10,6 +10,7 @@ ingress:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
@@ -53,6 +54,12 @@ nextcloud:
           2 => '172.16.0.0/12',
         ),
         'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
+      );
+    https-fix.config.php: |-
+      <?php
+      $CONFIG = array (
+        'overwrite.cli.url' => 'https://nx.pco.pink',
+        'overwriteprotocol' => 'https'
       );
 nginx:
   enabled: true
