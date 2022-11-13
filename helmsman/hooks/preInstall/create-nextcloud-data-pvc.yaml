@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/name: nextcloud-data
+  name: nextcloud-data
+  namespace: nextcloud
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/name: nextcloud-root
+  name: nextcloud-root
+  namespace: nextcloud
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi

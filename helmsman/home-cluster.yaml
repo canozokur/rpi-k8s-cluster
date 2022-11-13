@@ -46,6 +46,8 @@ apps:
     version: "3.3.0"
     protected: false
     valuesFile: nextcloud.yaml
+    hooks:
+      preInstall: hooks/preInstall/create-nextcloud-data-pvc.yaml
     set:
       nextcloud.password: "$NEXTCLOUD_ADMIN_PASS"
       externalDatabase.password: "$NEXTCLOUD_DB_PASSWORD"

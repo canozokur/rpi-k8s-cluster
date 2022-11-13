@@ -218,12 +218,10 @@ externalDatabase:
   user: root
 persistence:
   enabled: true
-  storageClass: truenas-iscsi
-  size: 20Gi
+  existingClaim: nextcloud-root
   nextcloudData:
     enabled: true
-    storageClass: truenas-nfs
-    size: 100Gi
+    existingClaim: nextcloud-data
 livenessProbe:
   enabled: true
   initialDelaySeconds: 1200
