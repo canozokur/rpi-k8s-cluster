@@ -29,6 +29,7 @@ helmRepos:
   actions-runner-controller: "https://actions-runner-controller.github.io/actions-runner-controller"
   mysql-operator-arm64: "https://canozokur.github.io/mysql-operator/"
   nextcloud: https://nextcloud.github.io/helm/
+  groundhog2k: https://groundhog2k.github.io/helm-charts/
 
 apps:
   mysql-operator:
@@ -65,6 +66,17 @@ apps:
     valuesFile: nextcloud-innodb-cluster.yaml
     set:
       credentials.root.password: "$NEXTCLOUD_DB_PASSWORD"
+  
+  nextcloud-redis:
+    namespace: "nextcloud"
+    enabled: true
+    wait: true
+    chart: groundhog2k/redis
+    version: "0.5.8"
+    protected: false
+    valuesFile: nextcloud-redis.yaml
+    set:
+      redisConfig: "requirepass ${NEXTCLOUD_REDIS_PASSWORD}"
 
   actions-runner-controller:
     namespace: "actions-runner-system"
