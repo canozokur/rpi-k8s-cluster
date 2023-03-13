@@ -17,7 +17,7 @@
       - name: "kube-apiserver"
         common_name: "kubernetes"
         organization: "Kubernetes"
-        subject_alt_name: "{{ groups['all'] | map('extract', hostvars, ['ansible_eth0','ipv4', 'address']) | map('regex_replace', '(^.*$)', 'IP:\\1') | join(',') }}\
+        subject_alt_name: "{{ groups['all'] | map('extract', hostvars, ['ansible_end0','ipv4', 'address']) | map('regex_replace', '(^.*$)', 'IP:\\1') | join(',') }}\
           ,IP:{{ certs_and_config_kube_api_public_ip }}\
           ,IP:127.0.0.1\
           ,{{ certs_and_config_kube_api_additional_subject_alt_names_list | map('regex_replace', '(^.*$)', 'DNS:\\1') | join(',') }}"
