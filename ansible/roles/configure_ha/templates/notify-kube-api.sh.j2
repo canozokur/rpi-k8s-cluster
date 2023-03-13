@@ -8,10 +8,12 @@ log() {
 
 state_backup() {
   log "Fallen back to backup..."
+  systemctl stop kube-apiserver
 }
 
 state_fault() {
   log "Service checks failed"
+  systemctl stop kube-apiserver
 }
 
 state_master() {

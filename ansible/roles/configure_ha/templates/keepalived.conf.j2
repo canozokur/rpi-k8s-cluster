@@ -23,7 +23,7 @@ vrrp_instance K8SAPI_VIP {
 
   unicast_peer {
     {% for host in groups['all'] | difference([inventory_hostname])%}
-    {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}
+    {{ hostvars[host]['ansible_end0']['ipv4']['address'] }}
     {% endfor %}
   }
 
