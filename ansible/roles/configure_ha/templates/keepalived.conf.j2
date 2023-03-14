@@ -3,10 +3,11 @@
 vrrp_script check_k8s_apiserver {
   script "/etc/keepalived/scripts/check_kubeapiserver.sh"
   interval 3
-  rise 1
+  rise 3
   fall 10
   timeout 1
   weight 2
+  init_fail
 }
 
 vrrp_instance K8SAPI_VIP {
