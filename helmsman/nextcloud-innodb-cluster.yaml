@@ -10,12 +10,12 @@ tls:
 podSpec:
   initContainers:
     - name: fixdatadir
-      image: ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
+      image: ghcr.io/canozokur/mysql-operator:8.0.32-2.0.8
     - name: initconf
-      image: ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
+      image: ghcr.io/canozokur/mysql-operator:8.0.32-2.0.8
   containers:
     - name: sidecar
-      image: ghcr.io/canozokur/mysql-operator:8.0.31-2.0.7
+      image: ghcr.io/canozokur/mysql-operator:8.0.32-2.0.8
 router:
   podSpec:
     containers:

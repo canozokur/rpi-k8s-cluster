@@ -37,7 +37,7 @@ apps:
     enabled: true
     wait: true
     chart: mysql-operator-arm64/mysql-operator
-    version: "0.0.2"
+    version: "0.0.3"
     protected: false
 
   nextcloud:
@@ -65,7 +65,7 @@ apps:
     enabled: true
     wait: true
     chart: mysql-operator-arm64/mysql-innodbcluster
-    version: "0.0.2"
+    version: "0.0.3"
     protected: false
     valuesFile: nextcloud-innodb-cluster.yaml
     set:
