@@ -35,10 +35,10 @@ driver:
     driver: freenas-nfs
     instance_id:
     httpConnection:
-      protocol: http
+      protocol: https
       host: 192.168.1.129
-      port: 80
-      apiKey: $TRUENAS_API_KEY
+      port: 443
+      apiVersion: 2
       allowInsecure: true
     sshConnection:
       host: 192.168.1.129
