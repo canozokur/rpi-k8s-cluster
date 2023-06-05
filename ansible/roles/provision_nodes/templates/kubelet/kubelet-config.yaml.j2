@@ -11,7 +11,7 @@ authorization:
   mode: Webhook
 clusterDomain: "cluster.local"
 clusterDNS:
-  - "192.168.10.2"
+  - "172.38.0.1"
 podCIDR: "{{ provision_nodes_pod_ip_range }}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
