@@ -105,10 +105,11 @@ apps:
     version: "0.13.6"
     protected: false
     valuesFile: truenas-nfs.yaml
+    set:
+      driver.config.httpConnection.apiKey: "${TRUENAS_APIKEY}"
     setFile:
       # api key needs to be create in TrueNAS and added into the file manually
       # truenas.apikey file shouldn't have a newline at the end
-      driver.config.httpConnection.apiKey: ../certs/truenas.apikey
       driver.config.sshConnection.privateKey: ../certs/truenas
     group: truenas
 
