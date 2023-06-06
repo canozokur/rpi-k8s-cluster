@@ -82,6 +82,8 @@
     owner: root
     group: root
     mode: 0600
+  tags:
+    - kube-controller-manager
 
 - name: Create controller manager systemd service
   template:
@@ -92,6 +94,8 @@
     mode: 0644
   notify:
     - Reload systemd
+  tags:
+    - kube-controller-manager
 
 - name: Copy scheduler config
   copy:
