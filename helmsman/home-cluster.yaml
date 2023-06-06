@@ -108,8 +108,7 @@ apps:
     set:
       driver.config.httpConnection.apiKey: "${TRUENAS_APIKEY}"
     setFile:
-      # api key needs to be create in TrueNAS and added into the file manually
-      # truenas.apikey file shouldn't have a newline at the end
+      # can't move this to .env, multiline gives me a headache
       driver.config.sshConnection.privateKey: ../certs/truenas
     group: truenas
 
@@ -123,8 +122,7 @@ apps:
     set:
       driver.config.httpConnection.apiKey: "${TRUENAS_APIKEY}"
     setFile:
-      # api key needs to be create in TrueNAS and added into the file manually
-      # truenas.apikey file shouldn't have a newline at the end
+      # can't move this to .env, multiline gives me a headache
       driver.config.sshConnection.privateKey: ../certs/truenas
     group: truenas
 
