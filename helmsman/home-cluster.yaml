@@ -235,3 +235,14 @@ apps:
     version: "10.3.0"
     protected: false
     valuesFile: bazarr.yaml
+
+  unpackerr:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/unpackerr
+    version: "5.4.2"
+    protected: false
+    valuesFile: unpackerr.yaml
+    set:
+      env.UN_RADARR_0_API_KEY: "$UN_RADARR_0_API_KEY"
+      env.UN_SONARR_0_API_KEY: "$UN_SONARR_0_API_KEY"

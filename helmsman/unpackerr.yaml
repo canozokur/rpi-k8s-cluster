@@ -1,0 +1,33 @@
+---
+env:
+  TZ: Europe/Helsinki
+  PGID: 568
+  PUID: 568
+  UN_SONARR_0_URL: http://sonarr:8989
+  UN_SONARR_0_PROTOCOLS: torrent
+  UN_RADARR_0_URL: http://radarr:7878
+  UN_RADARR_0_PROTOCOLS: torrent
+persistence:
+  config:
+    enabled: enabled
+    type: pvc
+    storageClass: truenas-iscsi
+    mountPath: /config
+    size: 1Gi
+    retain: false
+    accessMode: ReadWriteOnce
+  shared:
+    enabled: enabled
+    type: pvc
+    mountPath: /shared
+    existingClaim: media-shared
+    size: 1Ti
+    retain: true
+    accessMode: ReadWriteMany
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 500Mi
