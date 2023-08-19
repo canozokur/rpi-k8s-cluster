@@ -34,7 +34,7 @@ helmRepos:
 apps:
   mysql-operator:
     namespace: "mysql-operator"
-    enabled: true
+    enabled: false
     wait: true
     chart: mysql-operator-arm64/mysql-operator
     version: "0.0.3"
@@ -62,7 +62,7 @@ apps:
 
   nextcloud-innodb-cluster:
     namespace: "nextcloud"
-    enabled: true
+    enabled: false
     wait: true
     chart: mysql-operator-arm64/mysql-innodbcluster
     version: "0.0.3"
