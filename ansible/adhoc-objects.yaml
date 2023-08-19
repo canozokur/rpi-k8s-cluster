@@ -22,6 +22,7 @@
               - protocol: TCP
                 port: 8096
                 targetPort: 9096
+                nodePort: 31592
       tags: emby
 
     - name: Create endpoint for Emby service
