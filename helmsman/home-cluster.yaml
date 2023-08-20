@@ -17,6 +17,7 @@ namespaces:
       app: metallb
   actions-runner-system:
   mysql-operator:
+  mariadb-operator:
   nextcloud:
 
 helmRepos:
@@ -30,8 +31,18 @@ helmRepos:
   mysql-operator-arm64: "https://canozokur.github.io/mysql-operator/"
   nextcloud: https://nextcloud.github.io/helm/
   groundhog2k: https://groundhog2k.github.io/helm-charts/
+  mariadb-operator: https://mariadb-operator.github.io/mariadb-operator
 
 apps:
+  mariadb-operator:
+    namespace: "mariadb-operator"
+    enabled: true
+    wait: true
+    chart: mariadb-operator/mariadb-operator
+    version: "0.19.0"
+    protected: false
+    valuesFile: mariadb-operator.yaml
+
   mysql-operator:
     namespace: "mysql-operator"
     enabled: false
