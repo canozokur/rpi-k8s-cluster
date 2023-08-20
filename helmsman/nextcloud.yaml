@@ -231,8 +231,8 @@ internalDatabase:
 externalDatabase:
   enabled: true
   type: mysql
-  host: nextcloud-innodb-cluster
-  user: root
+  host: nextcloud-mariadb
+  user: nextcloud
 persistence:
   enabled: true
   existingClaim: nextcloud-root
