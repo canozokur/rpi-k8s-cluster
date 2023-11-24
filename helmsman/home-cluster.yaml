@@ -70,6 +70,7 @@ apps:
       nextcloud.extraEnv[0].value: "$NEXTCLOUD_REDIS_PASSWORD"
       nextcloud.extraEnv[1].name: "REDIS_HOST"
       nextcloud.extraEnv[1].value: "nextcloud-redis"
+      ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
 
   nextcloud-innodb-cluster:
     namespace: "nextcloud"
@@ -101,6 +102,8 @@ apps:
     version: "0.21.0"
     protected: false
     valuesFile: actions-runner-controller.yaml
+    set:
+      githubWebhookServer.ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
 
   metallb:
     namespace: "metallb-system"
