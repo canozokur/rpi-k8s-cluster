@@ -55,7 +55,7 @@ apps:
     namespace: "nextcloud"
     enabled: true
     chart: nextcloud/nextcloud
-    version: "3.5.13"
+    version: "4.0.0"
     protected: false
     valuesFile: nextcloud.yaml
     hooks:
