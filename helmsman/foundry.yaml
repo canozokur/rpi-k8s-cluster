@@ -1,0 +1,39 @@
+image:
+  tag: "11.315.0"
+
+persistence:
+  storageClass: truenas-iscsi
+  dataDir:
+    enabled: true
+    size: 100Gi
+
+ingress:
+  enabled: true
+  class: external-nginx
+  hostname: foundry.pco.pink
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+  tls:
+    enabled: true
+
+foundryvtt:
+  hostname: "foundry.pco.pink"
+  version: "11.315"
+
+resources:
+  limits:
+    cpu: 4096m
+    memory: 4096Mi
+
+service:
+  serviceType: ClusterIP
+
+cloudProviders:
+  aws:
+    loadBalancer:
+      enabled: false

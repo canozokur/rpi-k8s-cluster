@@ -19,6 +19,7 @@ namespaces:
   mysql-operator:
   mariadb-operator:
   nextcloud:
+  vtt:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -32,6 +33,8 @@ helmRepos:
   nextcloud: https://nextcloud.github.io/helm/
   groundhog2k: https://groundhog2k.github.io/helm-charts/
   mariadb-operator: https://mariadb-operator.github.io/mariadb-operator
+  foundry-vtt: https://hugoprudente.github.io/helm-charts/incubator/
+
 
 apps:
   mariadb-operator:
@@ -260,3 +263,17 @@ apps:
     set:
       env.UN_RADARR_0_API_KEY: "$UN_RADARR_0_API_KEY"
       env.UN_SONARR_0_API_KEY: "$UN_SONARR_0_API_KEY"
+
+  foundry:
+    namespace: vtt
+    enabled: true
+    chart: foundry-vtt/foundry-vtt
+    version: "11.306.0"
+    protected: false
+    valuesFile: foundry.yaml
+    set:
+      foundryvtt.username: "$FOUNDRYVTT_USERNAME"
+      foundryvtt.password: "$FOUNDRYVTT_PASSWORD"
+      foundryvtt.licenseKey: "$FOUNDRYVTT_LICENSEKEY"
+      foundryvtt.adminPassword: "$FOUNDRYVTT_ADMIN_PASSWORD"
+      ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
