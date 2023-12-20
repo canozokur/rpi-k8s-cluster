@@ -2,7 +2,7 @@ image:
   tag: "11.315.0"
 
 persistence:
-  storageClass: truenas-iscsi
+  storageClass: truenas-nfs
   dataDir:
     enabled: true
     size: 100Gi
@@ -18,12 +18,16 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   tls:
     enabled: true
 
 foundryvtt:
   hostname: "foundry.pco.pink"
   version: "11.315"
+
+container:
+  preserveConfig: true
 
 resources:
   limits:
