@@ -4,7 +4,7 @@ env:
   PGID: 568
 image:
   repository: linuxserver/prowlarr
-  tag: 1.4.1
+  tag: 1.12.2
 # -- Configures service settings for the chart.
 # @default -- See values.yaml
 service:
