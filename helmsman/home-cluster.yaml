@@ -20,6 +20,7 @@ namespaces:
   mariadb-operator:
   nextcloud:
   vtt:
+  pihole:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -34,7 +35,7 @@ helmRepos:
   groundhog2k: https://groundhog2k.github.io/helm-charts/
   mariadb-operator: https://mariadb-operator.github.io/mariadb-operator
   foundry-vtt: https://hugoprudente.github.io/helm-charts/incubator/
-
+  mojo2600: https://mojo2600.github.io/pihole-kubernetes/
 
 apps:
   mariadb-operator:
@@ -277,3 +278,13 @@ apps:
       foundryvtt.licenseKey: "$FOUNDRYVTT_LICENSEKEY"
       foundryvtt.adminPassword: "$FOUNDRYVTT_ADMIN_PASSWORD"
       ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
+
+  pihole:
+    namespace: pihole
+    enabled: true
+    chart: mojo2600/pihole
+    version: "2.21.0"
+    protected: false
+    valuesFile: pihole.yaml
+    set:
+      adminPassword: "$PIHOLE_ADMIN_PASSWORD"
