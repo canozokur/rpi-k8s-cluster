@@ -1,5 +1,5 @@
 image:
-  tag: "11.315.0"
+  tag: "11.315.1"
 
 persistence:
   storageClass: truenas-nfs
