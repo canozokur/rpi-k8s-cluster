@@ -178,6 +178,14 @@ apps:
     hooks:
       postInstall: hooks/postInstall/cert-manager.yaml
 
+  flaresolverr:
+    namespace: media
+    enabled: true
+    chart: k8s-at-home/flaresolverr
+    version: "5.4.2"
+    protected: false
+    valuesFile: flaresolverr.yaml
+
   prowlarr:
     namespace: media
     enabled: true

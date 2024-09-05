@@ -1,0 +1,40 @@
+env:
+  TZ: Europe/Helsinki
+  PUID: 568
+  PGID: 568
+image:
+  repository: flaresolverr/flaresolverr
+  tag: v3.3.21
+# -- Configures service settings for the chart.
+# @default -- See values.yaml
+service:
+  main:
+    ports:
+      http:
+        port: 8191
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/hostname: flaresolverr.pco.pink
+    hosts:
+      - host: flaresolverr.pco.pink
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: flaresolverr-tls-cert
+        hosts:
+          - flaresolverr.pco.pink
+
+persistence:
+  config:
+    enabled: enabled
+    type: pvc
+    storageClass: truenas-iscsi
+    mountPath: /config
+    size: 1Gi
+    retain: false
+    accessMode: ReadWriteOnce
