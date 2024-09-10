@@ -7,4 +7,4 @@
       prompt: Enter the new version (e.g. v1.25.3)
       private: no
   roles:
-    - role: upgrade_control_plane
+  - role: upgrade_control_plane

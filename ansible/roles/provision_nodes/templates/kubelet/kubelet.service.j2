@@ -7,7 +7,6 @@ Requires=containerd.service
 [Service]
 ExecStart=/usr/local/bin/kubelet \
   --config=/var/lib/kubelet/kubelet-config.yaml \
-  --container-runtime=remote \
   --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
   --kubeconfig=/var/lib/kubelet/kubeconfig \
   --register-node=true \
