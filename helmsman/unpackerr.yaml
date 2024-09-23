@@ -1,4 +1,6 @@
 ---
+image:
+  tag: "0.14"
 env:
   TZ: Europe/Helsinki
   PGID: 568

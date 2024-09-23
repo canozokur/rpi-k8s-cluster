@@ -36,6 +36,7 @@ helmRepos:
   mariadb-operator: https://mariadb-operator.github.io/mariadb-operator
   foundry-vtt: https://hugoprudente.github.io/helm-charts/incubator/
   mojo2600: https://mojo2600.github.io/pihole-kubernetes/
+  k8s-home-lab: https://k8s-home-lab.github.io/helm-charts/
 
 apps:
   mariadb-operator:
