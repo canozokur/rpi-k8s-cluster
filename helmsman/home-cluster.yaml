@@ -21,6 +21,7 @@ namespaces:
   nextcloud:
   vtt:
   pihole:
+  zot:
   database:
 
 helmRepos:
@@ -38,6 +39,7 @@ helmRepos:
   foundry-vtt: https://hugoprudente.github.io/helm-charts/incubator/
   mojo2600: https://mojo2600.github.io/pihole-kubernetes/
   k8s-home-lab: https://k8s-home-lab.github.io/helm-charts/
+  project-zot: https://zotregistry.dev/helm-charts
 
 appsTemplates:
   adhoc: &adhoc
@@ -50,6 +52,20 @@ appsTemplates:
     version: "0.0.1"
 
 apps:
+  zot:
+    namespace: "zot"
+    enabled: true
+    wait: true
+    chart: project-zot/zot
+    version: "0.1.66"
+    protected: false
+    valuesFile: zot.yaml
+    set:
+      ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP_PROXY"
+      authHeader: "$ZOT_AUTH_HEADER"
+    setFile:
+      secretFiles.htpasswd: "zot/htpasswd"
+
   mariadb-operator:
     namespace: "mariadb-operator"
     group: mariadb-operator
