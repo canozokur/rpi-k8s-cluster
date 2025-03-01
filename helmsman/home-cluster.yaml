@@ -114,17 +114,6 @@ apps:
       nextcloud.extraEnv[1].value: "nextcloud-redis"
       ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
 
-  nextcloud-innodb-cluster:
-    namespace: "nextcloud"
-    enabled: false
-    wait: true
-    chart: mysql-operator-arm64/mysql-innodbcluster
-    version: "0.0.3"
-    protected: false
-    valuesFile: nextcloud-innodb-cluster.yaml
-    set:
-      credentials.root.password: "$NEXTCLOUD_DB_PASSWORD"
-  
   nextcloud-redis:
     namespace: "nextcloud"
     enabled: true
@@ -263,42 +252,6 @@ apps:
     valuesFile: sonarr.yaml
     hooks:
       preInstall: hooks/preInstall/create-shared-pvc.yaml
-
-  nzbget:
-    namespace: media
-    enabled: false
-    chart: k8s-at-home/nzbget
-    version: "12.2.0"
-    protected: false
-    valuesFile: nzbget.yaml
-    hooks:
-      preInstall: hooks/preInstall/create-shared-pvc.yaml
-
-  emby:
-    namespace: media
-    enabled: false
-    chart: k8s-at-home/emby
-    version: "3.2.0"
-    protected: false
-    valuesFile: emby.yaml
-    hooks:
-      preInstall: hooks/preInstall/create-shared-pvc.yaml
-
-  smarter-device-manager:
-    namespace: device-manager
-    enabled: false
-    chart: k8s-at-home/smarter-device-manager
-    version: "6.3.0"
-    protected: false
-    valuesFile: smarter-device-manager.yaml
-
-  bazarr:
-    namespace: media
-    enabled: false
-    chart: k8s-at-home/bazarr
-    version: "10.3.0"
-    protected: false
-    valuesFile: bazarr.yaml
 
   unpackerr:
     namespace: media
