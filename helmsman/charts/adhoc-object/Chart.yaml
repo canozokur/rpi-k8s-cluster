@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "0.1"
+description: Chart to keep smaller resources inside helm. Use the values.yaml to create any kind of resource, you won't have template support though.
+name: adhoc-object
+version: 0.0.1
