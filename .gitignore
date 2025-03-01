@@ -8,3 +8,4 @@ config/
 ansible/cache
 .env
 ansible/plugins/
+zot/

@@ -1,0 +1,84 @@
+image:
+
+  repository: ghcr.io/project-zot/zot-linux-arm64
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: external-nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/fastcgi-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+  hosts:
+    - host: zot.pco.pink
+      paths:
+        - path: /
+  tls:
+    - secretName: zot-tls-cert
+      hosts:
+        - zot.pco.pink
+
+persistence: true
+pvc:
+  create: true
+  name: zot-pvc
+  accessMode: ReadWriteOnce
+  storage: 100Gi
+  storageClassName: truenas-nfs
+
+mountConfig: true
+
+configFiles:
+  config.json: |-
+    {
+      "storage": {
+        "rootDirectory": "/var/lib/registry",
+        "commit": true,
+        "dedupe": true,
+        "gc": true,
+        "gcDelay": "1h",
+        "gcInterval": "24h"
+      },
+      "http": {
+        "address": "0.0.0.0",
+        "port": "5000",
+        "compat": ["docker2s2"],
+        "auth": {
+          "failDelay": 5,
+          "htpasswd": {
+            "path": "/secret/htpasswd"
+          }
+        }
+      },
+      "extensions": {
+        "ui": {
+          "enable": true
+        },
+        "scrub": {
+          "enable": true,
+          "interval": "24h"
+        },
+        "search": {
+          "enable": true,
+          "cve": {
+            "updateInterval": "2h"
+          }
+        }
+      },
+      "log": {
+        "level": "debug"
+      }
+    }
+
+mountSecret: true
