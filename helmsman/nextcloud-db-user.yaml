@@ -1,0 +1,13 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: User
+metadata:
+  name: nextcloud-shared-db
+spec:
+  name: nextcloud
+  host: '%'
+  passwordSecretKeyRef:
+    key: password
+    name: mariadb-nextcloud
+  mariaDbRef:
+    name: shared-mariadb
+    namespace: database

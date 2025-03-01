@@ -1,0 +1,14 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: nextcloud-shared-db
+spec:
+  database: nextcloud
+  grantOption: true
+  mariaDbRef:
+    name: shared-mariadb
+    namespace: database
+  privileges:
+  - ALL
+  table: '*'
+  username: nextcloud
