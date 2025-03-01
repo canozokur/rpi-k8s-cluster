@@ -39,6 +39,16 @@ helmRepos:
   mojo2600: https://mojo2600.github.io/pihole-kubernetes/
   k8s-home-lab: https://k8s-home-lab.github.io/helm-charts/
 
+appsTemplates:
+  adhoc: &adhoc
+    valuesFile: ""
+    namespace: ""
+    enabled: true
+    wait: true
+    chart: charts/adhoc-object
+    protected: false
+    version: "0.0.1"
+
 apps:
   mariadb-operator:
     namespace: "mariadb-operator"
@@ -60,13 +70,28 @@ apps:
     version: "0.37.1"
     protected: false
 
-  mysql-operator:
-    namespace: "mysql-operator"
-    enabled: false
-    wait: true
-    chart: mysql-operator-arm64/mysql-operator
-    version: "0.0.3"
-    protected: false
+  shared-mariadb:
+    <<: *adhoc
+    namespace: "database"
+    valuesFile: shared-mysql.yaml
+
+  nextcloud-database:
+    <<: *adhoc
+    enabled: true
+    namespace: "nextcloud"
+    valuesFile: nextcloud-database.yaml
+
+  nextcloud-db-user:
+    <<: *adhoc
+    enabled: true
+    namespace: "nextcloud"
+    valuesFile: nextcloud-db-user.yaml
+
+  nextcloud-db-grant:
+    <<: *adhoc
+    enabled: true
+    namespace: "nextcloud"
+    valuesFile: nextcloud-db-grant.yaml
 
   nextcloud:
     namespace: "nextcloud"

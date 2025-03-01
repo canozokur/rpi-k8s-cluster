@@ -233,7 +233,7 @@ internalDatabase:
 externalDatabase:
   enabled: true
   type: mysql
-  host: nextcloud-mariadb
+  host: shared-mariadb.database.svc.cluster.local
   user: nextcloud
 persistence:
   enabled: true
