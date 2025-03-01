@@ -1,0 +1,58 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: shared-mariadb
+spec:
+  galera:
+    availableWhenDonor: false
+    config:
+      reuseStorageVolume: false
+      volumeClaimTemplate:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 300Mi
+        storageClassName: truenas-iscsi
+    enabled: true
+    primary:
+      automaticFailover: true
+    recovery:
+      enabled: true
+    replicaThreads: 1
+    sst: mariabackup
+  metrics:
+    enabled: false
+  myCnf: |
+    [mariadb]
+    innodb_file_per_table=ON
+    character_set_server = utf8mb4
+    collation_server = utf8mb4_general_ci
+    sync_binlog = 0
+    innodb_flush_log_at_trx_commit = 2
+    innodb_flush_method = O_DIRECT
+  replicas: 3
+  replicasAllowEvenNumber: false
+  rootPasswordSecretKeyRef:
+    generate: false
+    key: root-password
+    name: shared-mariadb-root
+  service:
+    type: ClusterIP
+  storage:
+    ephemeral: false
+    resizeInUseVolumes: true
+    size: 100Gi
+    volumeClaimTemplate:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: truenas-iscsi
+    waitForVolumeResize: true
+  tls:
+    enabled: false
+  updateStrategy:
+    autoUpdateDataPlane: true
+    type: RollingUpdate
