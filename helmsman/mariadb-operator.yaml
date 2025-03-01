@@ -1,5 +1,8 @@
 metrics:
   enabled: false # disable metrics until Prom installed
 webhook:
-  certificate:
-    certManager: true
+  cert:
+    certManager:
+      enabled: true
+certController:
+  enabled: false
