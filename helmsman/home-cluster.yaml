@@ -21,6 +21,7 @@ namespaces:
   nextcloud:
   vtt:
   pihole:
+  database:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -41,12 +42,23 @@ helmRepos:
 apps:
   mariadb-operator:
     namespace: "mariadb-operator"
+    group: mariadb-operator
     enabled: true
     wait: true
     chart: mariadb-operator/mariadb-operator
-    version: "0.19.0"
+    version: "0.37.1"
     protected: false
     valuesFile: mariadb-operator.yaml
+
+  mariadb-operator-crds:
+    namespace: "mariadb-operator"
+    group: mariadb-operator
+    priority: -2
+    enabled: true
+    wait: true
+    chart: mariadb-operator/mariadb-operator-crds
+    version: "0.37.1"
+    protected: false
 
   mysql-operator:
     namespace: "mysql-operator"
