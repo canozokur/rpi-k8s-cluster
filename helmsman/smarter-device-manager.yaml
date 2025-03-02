@@ -1,8 +1,0 @@
----
-env:
-  TZ: Europe/Helsinki
-config: |
-  - devicematch: ^vchiq$
-    nummaxdevices: 20
-  - devicematch: ^video[0-9]*$
-    nummaxdevices: 20

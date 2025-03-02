@@ -22,6 +22,7 @@ namespaces:
   vtt:
   pihole:
   zot:
+  gitea:
   database:
 
 helmRepos:
@@ -40,6 +41,7 @@ helmRepos:
   mojo2600: https://mojo2600.github.io/pihole-kubernetes/
   k8s-home-lab: https://k8s-home-lab.github.io/helm-charts/
   project-zot: https://zotregistry.dev/helm-charts
+  gitea-charts: https://dl.gitea.com/charts/
 
 appsTemplates:
   adhoc: &adhoc
@@ -108,6 +110,24 @@ apps:
     enabled: true
     namespace: "nextcloud"
     valuesFile: plain-manifest/nextcloud-db-grant.yaml
+
+  gitea-db:
+    <<: *adhoc
+    enabled: true
+    namespace: "gitea"
+    valuesFile: plain-manifest/gitea-db.yaml
+
+  gitea-db-user:
+    <<: *adhoc
+    enabled: true
+    namespace: "gitea"
+    valuesFile: plain-manifest/gitea-db-user.yaml
+
+  gitea-db-grant:
+    <<: *adhoc
+    enabled: true
+    namespace: "gitea"
+    valuesFile: plain-manifest/gitea-db-grant.yaml
 
   nextcloud:
     namespace: "nextcloud"
