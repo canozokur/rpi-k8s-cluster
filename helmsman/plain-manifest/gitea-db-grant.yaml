@@ -1,0 +1,14 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: gitea-shared-db
+spec:
+  database: giteadb
+  grantOption: true
+  mariaDbRef:
+    name: shared-mariadb
+    namespace: database
+  privileges:
+  - ALL
+  table: '*'
+  username: gitea
