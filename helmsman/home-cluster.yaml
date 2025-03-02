@@ -97,7 +97,7 @@ apps:
     <<: *adhoc
     enabled: true
     namespace: "nextcloud"
-    valuesFile: plain-manifest/nextcloud-database.yaml
+    valuesFile: plain-manifest/nextcloud-db.yaml
 
   nextcloud-db-user:
     <<: *adhoc
