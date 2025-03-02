@@ -89,25 +89,25 @@ apps:
   shared-mariadb:
     <<: *adhoc
     namespace: "database"
-    valuesFile: shared-mysql.yaml
+    valuesFile: plain-manifest/shared-mysql.yaml
 
   nextcloud-database:
     <<: *adhoc
     enabled: true
     namespace: "nextcloud"
-    valuesFile: nextcloud-database.yaml
+    valuesFile: plain-manifest/nextcloud-database.yaml
 
   nextcloud-db-user:
     <<: *adhoc
     enabled: true
     namespace: "nextcloud"
-    valuesFile: nextcloud-db-user.yaml
+    valuesFile: plain-manifest/nextcloud-db-user.yaml
 
   nextcloud-db-grant:
     <<: *adhoc
     enabled: true
     namespace: "nextcloud"
-    valuesFile: nextcloud-db-grant.yaml
+    valuesFile: plain-manifest/nextcloud-db-grant.yaml
 
   nextcloud:
     namespace: "nextcloud"
