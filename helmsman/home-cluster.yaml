@@ -53,6 +53,15 @@ appsTemplates:
     protected: false
     version: "0.0.1"
 
+  secret: &secret
+    valuesFile: ""
+    namespace: ""
+    enabled: true
+    wait: true
+    chart: charts/adhoc-secret
+    protected: false
+    version: "0.0.1"
+
 apps:
   zot:
     namespace: "zot"
@@ -111,6 +120,13 @@ apps:
     namespace: "nextcloud"
     valuesFile: plain-manifest/nextcloud-db-grant.yaml
 
+  gitea-db-user-secret:
+    <<: *secret
+    enabled: true
+    namespace: "gitea"
+    set:
+      secrets.gitea-db-user.data.password: $GITEA_DB_PASSWORD
+
   gitea-db:
     <<: *adhoc
     enabled: true
@@ -128,6 +144,35 @@ apps:
     enabled: true
     namespace: "gitea"
     valuesFile: plain-manifest/gitea-db-grant.yaml
+
+  gitea-redis:
+    namespace: "gitea"
+    enabled: true
+    wait: true
+    chart: groundhog2k/redis
+    version: "1.3.3"
+    protected: false
+    valuesFile: gitea-redis.yaml
+    set:
+      redisConfig: "requirepass ${GITEA_REDIS_PASSWORD}"
+
+  gitea:
+    namespace: "gitea"
+    enabled: true
+    wait: true
+    chart: gitea-charts/gitea
+    version: "11.0.0"
+    protected: false
+    valuesFile: gitea.yaml
+    timeout: 600
+    set:
+      gitea.admin.username: "$GITEA_ADMIN_USERNAME"
+      gitea.admin.password: "$GITEA_ADMIN_PASSWORD"
+      gitea.admin.email: "$GITEA_ADMIN_EMAIL"
+      gitea.config.database.PASSWD: "$GITEA_DB_PASSWORD"
+      gitea.config.queue.CONN_STR: "redis://:$GITEA_REDIS_PASSWORD@gitea-redis:6379/0"
+      gitea.config.cache.HOST: "redis://:$GITEA_REDIS_PASSWORD@gitea-redis:6379/0?pool_size=100&idle_timeout=180s"
+      gitea.config.session.PROVIDER_CONFIG: "redis://:$GITEA_REDIS_PASSWORD@gitea-redis:6379/0"
 
   nextcloud:
     namespace: "nextcloud"

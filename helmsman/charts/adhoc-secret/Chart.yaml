@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "0.1"
+description: Chart to keep secrets in helm when provided charts don't create them for us.
+name: adhoc-secret
+version: 0.0.1

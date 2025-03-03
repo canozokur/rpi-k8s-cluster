@@ -1,0 +1,39 @@
+redis-cluster:
+  enabled: false
+redis:
+  enabled: false
+postgresql:
+  enabled: false
+postgresql-ha:
+  enabled: false
+
+image:
+  rootless: true
+
+persistence:
+  enabled: true
+  storageClass: truenas-nfs
+  size: 100Gi
+  accessModes:
+    - ReadWriteMany
+
+gitea:
+  admin: {} # we're setting the values from DST
+  config:
+    database:
+      DB_TYPE: mysql
+      HOST: shared-mariadb.database.svc.cluster.local
+      NAME: giteadb
+      USER: gitea
+      SSL_MODE: disable
+      MAX_OPEN_CONNS: 10
+    queue:
+      TYPE: redis
+      QUEUE_NAME: gitea_queue
+    cache:
+      ADAPTER: redis
+    session:
+      PROVIDER: redis
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
