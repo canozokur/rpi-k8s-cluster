@@ -1,0 +1,28 @@
+authentik:
+  error_reporting:
+    enabled: false
+  email:
+    from: login@pco.pink
+    host: smtp.postmarkapp.com
+    port: 587
+    use_tls: true
+
+server:
+  ingress:
+    ingressClassName: external-nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    tls:
+    - secretName: authentik-tls-cert
+      hosts:
+      - login.pco.pink
+    enabled: true
+    hosts:
+      - login.pco.pink
+
+postgresql:
+  enabled: true
+
+redis:
+  enabled: true

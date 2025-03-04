@@ -16,7 +16,6 @@ namespaces:
     labels:
       app: metallb
   actions-runner-system:
-  mysql-operator:
   mariadb-operator:
   nextcloud:
   vtt:
@@ -24,6 +23,7 @@ namespaces:
   zot:
   gitea:
   database:
+  authentik:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -42,6 +42,7 @@ helmRepos:
   k8s-home-lab: https://k8s-home-lab.github.io/helm-charts/
   project-zot: https://zotregistry.dev/helm-charts
   gitea-charts: https://dl.gitea.com/charts/
+  authentik: https://charts.goauthentik.io
 
 appsTemplates:
   adhoc: &adhoc
@@ -368,3 +369,18 @@ apps:
     valuesFile: pihole.yaml
     set:
       adminPassword: "$PIHOLE_ADMIN_PASSWORD"
+
+  authentik:
+    namespace: authentik
+    enabled: true
+    chart: authentik/authentik
+    version: "2025.2.1"
+    protected: false
+    valuesFile: authentik.yaml
+    set:
+      authentik.secret_key: $AUTHENTIK_SECRET_KEY
+      authentik.postgresql.password: $AUTHENTIK_POSTGRES_PASSWORD
+      postgresql.auth.password: $AUTHENTIK_POSTGRES_PASSWORD
+      authentik.email.username: "$POSTMARK_ACCESS_KEY"
+      authentik.email.password: "$POSTMARK_SECRET_KEY"
+      server.ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
