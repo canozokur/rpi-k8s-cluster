@@ -381,6 +381,7 @@ apps:
       authentik.secret_key: $AUTHENTIK_SECRET_KEY
       authentik.postgresql.password: $AUTHENTIK_POSTGRES_PASSWORD
       postgresql.auth.password: $AUTHENTIK_POSTGRES_PASSWORD
+      postgresql.auth.postgresPassword: $AUTHENTIK_POSTGRES_PASSWORD
       authentik.email.username: "$POSTMARK_ACCESS_KEY"
       authentik.email.password: "$POSTMARK_SECRET_KEY"
       server.ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
