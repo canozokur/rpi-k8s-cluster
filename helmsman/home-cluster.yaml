@@ -73,7 +73,7 @@ apps:
     protected: false
     valuesFile: zot.yaml
     set:
-      ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP"
+      ingress.annotations.external-dns\.alpha\.kubernetes\.io/target: "$EXTERNAL_IP_PROXY"
       authHeader: "$ZOT_AUTH_HEADER"
     setFile:
       secretFiles.htpasswd: "zot/htpasswd"
