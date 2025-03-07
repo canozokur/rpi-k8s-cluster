@@ -8,6 +8,7 @@ controller:
   service:
     annotations:
       metallb.universe.tf/address-pool: external
+      metallb.universe.tf/allow-shared-ip: external
   config:
     enable-real-ip: "true"
     use-forwarded-headers: "true"
