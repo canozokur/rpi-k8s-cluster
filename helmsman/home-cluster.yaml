@@ -379,6 +379,9 @@ apps:
     valuesFile: authentik.yaml
     set:
       authentik.secret_key: $AUTHENTIK_SECRET_KEY
+      authentik.bootstrap_token: $AUTHENTIK_BOOTSTRAP_TOKEN
+      authentik.bootstrap_password: $AUTHENTIK_BOOTSTRAP_PASSWORD
+      authentik.bootstrap_email: $AUTHENTIK_BOOTSTRAP_EMAIL
       authentik.postgresql.password: $AUTHENTIK_POSTGRES_PASSWORD
       postgresql.auth.password: $AUTHENTIK_POSTGRES_PASSWORD
       postgresql.auth.postgresPassword: $AUTHENTIK_POSTGRES_PASSWORD
