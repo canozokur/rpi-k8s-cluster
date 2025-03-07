@@ -37,3 +37,39 @@ gitea:
     indexer:
       ISSUE_INDEXER_TYPE: bleve
       REPO_INDEXER_ENABLED: true
+    server:
+      SSH_DOMAIN: git-ssh.pco.pink
+      SSH_PORT: 2222
+  additionalConfigFromEnvs:
+    - name: GITEA__SERVICE__DISABLE_REGISTRATION
+      value: "true"
+    - name: GITEA__SSH_0X2E_MINIMUM_KEY_SIZES__RSA
+      value: "2048"
+    - name: GITEA__OAUTH2_CLIENT__ENABLE_AUTO_REGISTRATION
+      value: "true"
+
+service:
+  http:
+    type: ClusterIP
+  ssh:
+    type: LoadBalancer
+    port: 2222
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: 192.168.50.255
+      metallb.universe.tf/allow-shared-ip: external
+
+ingress:
+  enabled: true
+  className: external-nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+  hosts:
+    - host: git.pco.pink
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+  - secretName: gitea-tls-cert
+    hosts:
+    - git.pco.pink
