@@ -1,5 +1,4 @@
 image:
-
   repository: ghcr.io/project-zot/zot-linux-arm64
   pullPolicy: IfNotPresent
 
@@ -37,48 +36,6 @@ pvc:
   storage: 100Gi
   storageClassName: truenas-nfs
 
+
 mountConfig: true
-
-configFiles:
-  config.json: |-
-    {
-      "storage": {
-        "rootDirectory": "/var/lib/registry",
-        "commit": true,
-        "dedupe": true,
-        "gc": true,
-        "gcDelay": "1h",
-        "gcInterval": "24h"
-      },
-      "http": {
-        "address": "0.0.0.0",
-        "port": "5000",
-        "compat": ["docker2s2"],
-        "auth": {
-          "failDelay": 5,
-          "htpasswd": {
-            "path": "/secret/htpasswd"
-          }
-        }
-      },
-      "extensions": {
-        "ui": {
-          "enable": true
-        },
-        "scrub": {
-          "enable": true,
-          "interval": "24h"
-        },
-        "search": {
-          "enable": true,
-          "cve": {
-            "updateInterval": "2h"
-          }
-        }
-      },
-      "log": {
-        "level": "debug"
-      }
-    }
-
 mountSecret: true
