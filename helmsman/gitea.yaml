@@ -47,6 +47,8 @@ gitea:
       value: "2048"
     - name: GITEA__OAUTH2_CLIENT__ENABLE_AUTO_REGISTRATION
       value: "true"
+    - name: GITEA__SERVICE__DEFAULT_KEEP_EMAIL_PRIVATE
+      value: "true"
 
 service:
   http:
