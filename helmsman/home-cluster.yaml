@@ -289,6 +289,18 @@ apps:
     protected: false
     valuesFile: cert-manager.yaml
 
+  clusterissuer-letsencrypt:
+    <<: *adhoc
+    enabled: true
+    namespace: "cert-manager"
+    valuesFile: plain-manifest/clusterissuer-letsencrypt.yaml
+
+  clusterissuer-selfsigned:
+    <<: *adhoc
+    enabled: true
+    namespace: "cert-manager"
+    valuesFile: plain-manifest/clusterissuer-selfsigned.yaml
+
   flaresolverr:
     namespace: media
     enabled: true
