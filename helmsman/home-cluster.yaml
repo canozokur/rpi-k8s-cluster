@@ -288,8 +288,6 @@ apps:
     version: "1.7.1"
     protected: false
     valuesFile: cert-manager.yaml
-    hooks:
-      postInstall: hooks/postInstall/cert-manager.yaml
 
   flaresolverr:
     namespace: media
