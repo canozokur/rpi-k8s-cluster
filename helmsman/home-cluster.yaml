@@ -24,6 +24,7 @@ namespaces:
   gitea:
   database:
   authentik:
+  vlmcsd:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -78,6 +79,15 @@ apps:
     setFile:
       secretFiles.htpasswd: "zot/htpasswd"
       configFiles.config\.json: "zot/config.json"
+
+  vlmcsd:
+    namespace: "vlmcsd"
+    enabled: true
+    wait: true
+    chart: oci://tccr.io/truecharts/vlmcsd-kms-server
+    version: "7.2.2"
+    protected: false
+    valuesFile: vlmcsd.yaml
 
   mariadb-operator:
     namespace: "mariadb-operator"

@@ -1,0 +1,10 @@
+service:
+  main:
+    type: LoadBalancer
+    ports:
+      main:
+        targetPort: 1688
+        port: 1688
+
+podOptions:
+  nodeSelector: []
