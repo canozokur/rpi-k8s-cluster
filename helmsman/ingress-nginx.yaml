@@ -2,3 +2,7 @@ controller:
   ingressClassResource:
     default: true
   enableExternalDNS: true
+  allowSnippetAnnotations: true
+  config:
+    annotations-risk-level: Critical
+    strict-validate-path-type: false

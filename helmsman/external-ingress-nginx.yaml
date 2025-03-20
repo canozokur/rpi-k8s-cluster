@@ -1,4 +1,5 @@
 controller:
+  allowSnippetAnnotations: true
   electionID: external-ingress-controller
   ingressClassResource:
     name: external-nginx  # default: nginx
@@ -14,3 +15,5 @@ controller:
     use-forwarded-headers: "true"
     forwarded-for-header: "CF-Connecting-IP"
     proxy-real-ip-cidr: "172.16.0.0/12"
+    strict-validate-path-type: false
+    annotations-risk-level: Critical
