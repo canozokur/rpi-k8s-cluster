@@ -409,7 +409,7 @@ apps:
     namespace: authentik
     enabled: true
     chart: authentik/authentik
-    version: "2025.2.1"
+    version: "2025.2.2"
     protected: false
     valuesFile: authentik.yaml
     set:
