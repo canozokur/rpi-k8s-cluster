@@ -25,6 +25,7 @@ namespaces:
   database:
   authentik:
   vlmcsd:
+  plantuml:
 
 helmRepos:
   k8s-at-home: "https://k8s-at-home.com/charts/"
@@ -44,6 +45,7 @@ helmRepos:
   project-zot: https://zotregistry.dev/helm-charts
   gitea-charts: https://dl.gitea.com/charts/
   authentik: https://charts.goauthentik.io
+  stevehipwell: https://stevehipwell.github.io/helm-charts/
 
 appsTemplates:
   adhoc: &adhoc
@@ -65,6 +67,15 @@ appsTemplates:
     version: "0.0.1"
 
 apps:
+  plantuml:
+    namespace: "plantuml"
+    enabled: true
+    wait: true
+    chart: stevehipwell/plantuml
+    version: "3.37.0"
+    protected: false
+    valuesFile: plantuml.yaml
+
   zot:
     namespace: "zot"
     enabled: true
