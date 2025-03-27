@@ -282,7 +282,7 @@ apps:
     namespace: "ingress-nginx"
     enabled: true
     chart: ingress-nginx/ingress-nginx
-    version: "4.12.0"
+    version: "4.12.1"
     protected: false
     valuesFile: ingress-nginx.yaml
 
@@ -290,7 +290,7 @@ apps:
     namespace: "ingress-nginx"
     enabled: true
     chart: ingress-nginx/ingress-nginx
-    version: "4.12.0"
+    version: "4.12.1"
     protected: false
     valuesFile: external-ingress-nginx.yaml
 
