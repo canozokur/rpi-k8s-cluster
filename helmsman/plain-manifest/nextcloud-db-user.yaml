@@ -5,6 +5,7 @@ metadata:
 spec:
   name: nextcloud
   host: '%'
+  maxUserConnections: 100
   passwordSecretKeyRef:
     key: password
     name: mariadb-nextcloud
