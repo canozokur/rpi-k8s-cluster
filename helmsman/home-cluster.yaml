@@ -306,7 +306,7 @@ apps:
     namespace: cert-manager
     enabled: true
     chart: jetstack/cert-manager
-    version: "1.7.1"
+    version: "1.17.2"
     protected: false
     valuesFile: cert-manager.yaml
 
