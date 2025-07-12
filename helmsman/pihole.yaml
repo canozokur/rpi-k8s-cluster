@@ -267,6 +267,7 @@ whitelist:
 
 persistentVolumeClaim:
   enabled: true
+  size: "1Gi"
 
 serviceWeb:
   type: ClusterIP
